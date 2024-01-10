@@ -1,58 +1,40 @@
-[![deploy hugo site](https://github.com/tillitis/dev-tillitis/actions/workflows/deploy.yaml/badge.svg)](https://github.com/tillitis/dev-tillitis/actions/workflows/deploy.yaml)
+# 📖 kthcloud/docs <img src=https://github.com/tillitis/dev-tillitis/actions/workflows/deploy.yaml/badge.svg >
 
-This is
-[automatically](https://github.com/kthcloud/docs/actions/workflows/deploy.yaml)
-deployed to https://docs.cloud.cbh.kth.se
+This repository contains all the code and content for kthcloud's documentation. It uses [Hugo](https://gohugo.io/), and this repository is inspired by [dev-tillitis](https://github.com/tillitis/dev-tillitis). 
 
-## Hugo
+The documenation is automatically built on every push, and it deployed to [https://docs.cloud.cbh.kth.se](https://docs.cloud.cbh.kth.se).
 
-See under `hugo` for our static site source. You need to install
-[Hugo](https://gohugo.io/) before using it to generate a Hugo website.
+## Try locally
 
-To see the Developer Handbook:
+You need to install [Hugo](https://gohugo.io/) before using it to generate a Hugo website.
 
+After that you can run the documentaion locally.
 ```
-% cd hugo
-% hugo server
+cd hugo
+hugo server
 ...
 Web Server is available at http://localhost:1313/ 
 ...
 ```
 
-Point your browser at http://localhost:1313/ to see our documentation.
+## Make edits
+All the documentation content and all images are available under `hugo/content`. 
 
-## Editing pages
+Fork it, change it, and make a PR!
 
-All real content is under `hugo/content` and are Markdown files
-compatible with [CommonMark](https://spec.commonmark.org/current/).
-[Mermaid diagrams](https://mermaid.js.org/intro/) are supported, too.
+### Example
 
-## First page
+You: "I want to add new documentation related to usage!"
 
-The first page is in `hugo/content/_index.md`.
+1. Go to `hugo/content/usage`
+2. Create a file: `camelCase.md`
+3. Make sure it looks good by starting the server locally
 
-## To create a new chapter
 
-Create a directory, for instance `tools`.
-
-Create an `_index.md` containing something like:
-
+If you find that you name gets intepreted incorrectly (Hugo tries to put spaces between the words in your filename), you can overwrite it using the following config in the top of your document.
 ```yaml
 ---
-title: Tools & libraries
-weight: 2
+title: My Overwritten Name
+weight: 2 # Order in the list
 ---
-
-# Tools & libraries
-
-Text about tools and libraries.
 ```
-
-## Write content in a chapter
-
-If you're not going to edit an existing file, create a new one with
-your favourite editor.
-
-In the front matter (the stuff inside `---` in the beginning of the
-file) you can specify the internal order with `weight: 2` to get it in
-second place in the table of contents.
