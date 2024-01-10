@@ -1,4 +1,6 @@
-[200px](/File:Harbor-logo.png "wikilink")
+# Harbor
+
+<img src="../../images/harbor_logo.png" width="35%">
 
 Harbor is used as the container registry in kthcloud.
 

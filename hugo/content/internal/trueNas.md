@@ -2,7 +2,9 @@
 title: TrueNAS
 ---
 
-[200px](/File:Truenas-logo.png "wikilink")
+# TrueNAS
+
+<img src="../../images/truenas_logo.png" width="40%">
 
 The kthcloud uses TrueNAS for storage. This is setup per zone, and some
 zones have their own setup.

@@ -7,38 +7,34 @@ title: Create a virtual machine
 Virtual machines are the most flexible resource type on kthcloud. They
 are simply a virtual computer running the latest build of Ubuntu Server.
 You can use them for anything you would do on a physical server, without
-worrying about power outages, network issues and fan noise\!
+worrying about power outages, network issues and fan noise!
 
 ## Creating a VM
 
 ### Navigate to the platform
 
-Go to https://cloud.cbh.kth.se/deploy
+Go to [https://cloud.cbh.kth.se/deploy](https://cloud.cbh.kth.se/deploy) and login by pressing the button in the top right corner.
 
-Press  [(png)](/File:Screenshot_from_2023-09-20_10-22-36.png "wikilink")  in
-the top right corner to log in
-
-(Preferred) [Sign in with KTH](/KTH_SSO "wikilink")
+If you have any trouble with the login, follow [this guide](/usage/setUpKthSso "wikilink") to troubleshoot KTH SSO.
 
 ### Create your VM
 
-[(png)](/File:Screenshot_from_2023-09-20_10-26-50.png "wikilink") Click
-on *+ Create*
+Once at the dashboard, create the VM using *+ Create*
 
 #### Name
 
 This name will be the name of your VM, both in our portal and inside the
-actual vm. For example with name **galactus**, your bash prompt will be:
+actual VM. For example with name **galactus**, your bash prompt will be:
 **root@galactus**.
 
 #### SSH Key
 
 If you do not have SSH keys yet, upload one on your profile. You can
-create one using ssh-keygen <https://www.ssh.com/academy/ssh/keygen>
+create one using the command `ssh-keygen`. Check it out [here](https://www.ssh.com/academy/ssh/keygen).
 
 Select your desired key, it will be copied into the VM at creation.
 
-Use it to login to the vm (keys in locations outside the default
+Use it to login to the VM (keys in locations outside the default
 \~/.ssh/id_rsa can be used with the -i argument.
 
 Once your VM is up and running, it is possible to add more keys manually
@@ -106,7 +102,7 @@ protocol. Once the rule is applied, you will receive the public port.
 This is the port which you can use in MongoDB Compass or in your
 connection string for other apps.
 
-Access it at vm.cloud.cbh.kth.se:YOUR_PUBLIC_PORT
+Access it at `vm.cloud.cbh.kth.se:<YOUR_PUBLIC_PORT>`
 
 ## FAQ
 
@@ -116,17 +112,17 @@ To achieve this, we will use a VM and a deployment together. Running
 nginx on the deployment allows us to proxy the traffic to the VM on the
 appropriate port.
 
-Follow the instructions at <https://github.com/kthcloud/vm-nginx-proxy>
+Follow the instructions at <https://github.com/kthcloud/VM-nginx-proxy>
 (See README file)
 
 Remember that the name of the deployment you create will be its
 subdomain.
 
-### I can't login to my vm, it says "premission denied (publickey)"
+### I can't login to my VM, it says "premission denied (publickey)"
 
 If you have created a ssh key in a location other than the default
 (usually \~/.ssh/id_rsa), you'll need to specify it when accessing your
-vm.
+VM.
 
 You can use the -i argument:
 

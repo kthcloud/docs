@@ -2,7 +2,9 @@
 title: PowerDNS
 ---
 
-[200px](/File:Powerdns-logo.png "wikilink")
+# PowerDNS
+
+<img src="../../images/powerdns_logo.png" width="55%">
 
 A PowerDNS instance is used as an external DNS-server in kthcloud. It is
 meant to resolve hostnames to external IP addresses (internally names

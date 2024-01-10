@@ -94,7 +94,7 @@ nameservers: 1.1.1.1
 
 Make sure to check *Install OpenSSH server*.
 
-[image](/File:Ubuntu-ssh.png "wikilink")
+<img src="../../images/ubuntu_ssh.png" width="85%">
 
 Fill out the name and credentials form as following:
 
@@ -115,6 +115,7 @@ found at [Credentials](https://www.kth.se/social/group/kth-cloud/page/credenti
 This needs to be possible without any passwords being entered so both
 proxy host and destination hosts must have keys copied from your local
 machine.
+
 
 <span id="local-machine-1"></span>
 
@@ -169,7 +170,7 @@ Fill in the form as shown in the image below.
 A cluster name should describe which hardware model it contains, eg.
 Precision 7920.
 
-[image](/File:Add-cluster.png "wikilink")
+<img src="../../images/add_cluster.png" width="35%">
 
 <span id="adding-a-host"></span>
 
@@ -180,7 +181,8 @@ Fill in the form as shown in the image below.
 If a new cluster was created, make sure it is visible in the *Cluster
 name* drop-down menu
 
-[image](/File:Add-host.png "wikilink")
+
+<img src="../../images/add_host.png" width="35%">
 
 <span id="api"></span>
 

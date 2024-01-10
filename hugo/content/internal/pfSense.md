@@ -2,7 +2,9 @@
 title: pfSense
 ---
 
-[200px](/File:Pfsense-logo.png "wikilink")
+# pfSense
+
+<img src="../../images/pfsense_logo.png" width="40%">
 
 A pfSense instance running on dedicated pfSense hardware serves as the
 firewall for kthcloud Flemingsberg Zone.

@@ -2,7 +2,9 @@
 title: MAAS
 ---
 
-[200px](/File:Maas-logo.png "wikilink")
+# MAAS
+
+<img src="../../images/maas_logo.png" width="30%">
 
 MAAS is used for server provisioning servers over PXE. It serves as the
 closest-to-hardware management tool in kthcloud. It also provides an

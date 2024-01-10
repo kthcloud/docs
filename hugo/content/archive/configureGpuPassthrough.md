@@ -31,7 +31,7 @@ Setting up the PCI passthrough
 2.  Note **ALL** of the bus channels and ID's (including Serial, USB,
     and audio). See image below.
 
-[lspci-list](/File:Lspci.png "wikilink")
+<img src="../../images/lspci.png" width="85%">
 
 <span id="edit-grub"></span>
 
@@ -128,7 +128,7 @@ If more cards are <span>to</span> be passed through <span>to</span>
 guide](https://lab.piszki.pl/cloudstack-kvm-and-running-vm-with-vgpu/).
 Once finished, <span>the</span> settings panel should look like this:
 
-[<File:Cloudstack-xml.png>](/File:Cloudstack-xml.png "wikilink")<span></span>
+<img src="../../images/cloudstack_xml_config.png" width="85%">
 
 <span>4.</span> Start <span>the</span> VM
 

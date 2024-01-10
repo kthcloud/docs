@@ -5,18 +5,16 @@ Request edit access by admin if updates are needed.
 
 ## Components
 
-[<File:Kthcloud-components.png>](/File:Kthcloud-components.png "wikilink")
+<img src="../../images/kthcloud_components.png" width="75%">
 
 ## Flow
 
-[<File:Kthcloud-flow.png>](/File:Kthcloud-flow.png "wikilink")
-
+<img src="../../images/kthcloud_flow.png" width="75%">
 
 ## Network
 ### IPv4
 
-You can see the current network config on our firewall at
-<https://130.237.83.250/>
+Current IP allocation, see the up-to-date list in the [firewall](https://fw.cloud.cbh.kth.se).
 
 | IP address        | usage                      |
 | ----------------- | -------------------------- |
@@ -30,9 +28,10 @@ You can see the current network config on our firewall at
 | 130.237.83.252/32 |                            |
 | 130.237.83.243/32 | kthcloud (Kista Temporary) |
 | 130.237.83.242/32 | ☁️ kthcloud                |
-|                   |                            |
 
-Current IP allocations
+<!-- Copy the lines below to append easier -->
+<!-- |                   |                            | -->
+
 
 ### IPv6
 

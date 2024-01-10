@@ -1,4 +1,6 @@
-[200px](/File:K8s-logo.png "wikilink")
+# K8s
+
+<img src="../../images/k8s_logo.png" width="30%">
 
 Kubernetes is used extensively in kthcloud for hosting apps.
 

@@ -13,9 +13,9 @@ secured machine learning pipelines for all your research needs.
 
 Relevant contact persons: Reine Bergström \<reineb@kth.se\>
 
-A flowchart is available
-[:<File:Secure_tutorial.png>](/:File:Secure_tutorial.png "wikilink"), we
-recommend you take a look before getting started.
+Please see the flowchart below before getting started.
+
+<img src="../../images/secd_overview.png" width="100%">
 
 ### Abstract
 
@@ -45,21 +45,15 @@ This guide assumes that you have received credentials for both OpenVPN
 and secd, and an OpenVPN configuration file (ends with .ovpn)
 
 ### Setup
-
 In order to use the system, there is some one-time configuration needed.
 
-  - 1\. (Optional) Import certificate authority
-
+#### 1. *(optional)* Import certificate authority
 Since the secure cluster is completely isolated, we need to self-sign
-our certificates.
-
-If you don't want your browser to scream at you every time you visit any
+our certificates. If you don't want your browser to scream at you every time you visit any
 of the webpages, you can import our certificate authority
-
-  -
-    1\. Download the CA-file
-    [here](https://secd.app.cloud.cbh.kth.se/media/secd.pem)
-    2\. Trust it on your computer
+  1. Download the CA-file
+      [here](https://secd.app.cloud.cbh.kth.se/media/secd.pem)
+  2. Trust it on your computer
       - Linux
         Follow [this
         guide](https://ubuntu.com/server/docs/security-trust-store) to
@@ -70,164 +64,87 @@ of the webpages, you can import our certificate authority
         to install the CA certificate
       - Windows
         Follow
-        [1](https://learn.microsoft.com/en-us/skype-sdk/sdn/articles/installing-the-trusted-root-certificate)
-        this guide to install the CA certificate
+        [this guide](https://learn.microsoft.com/en-us/skype-sdk/sdn/articles/installing-the-trusted-root-certificate) to install the CA certificate
 
-<!-- end list -->
+#### 2. Create a GPG-key
+In order to sign commits that our GitLab can trust, you need to
+create your own GPG key. If you already have a GPG key, you can skip this step.
 
-  - 2\. Create a GPG-key
-    In order to sign commits that our GitLab can trust, you need to
-    create your own GPG key.
-    If you already have a GPG key, you can skip this step.
+- Linux
+  1. Install gpg using apt: `apt install gnupg` (or the package
+  manager for your distro)
+  2. Follow [these
+  steps](https://docs.gitlab.com/ee/user/project/repository/signed_commits/gpg.html#create-a-gpg-key)
+  to generate a GPG key
 
-:; Linux
+- MacOS\
+  Follow [this
+  guide](https://gist.github.com/troyfontaine/18c9146295168ee9ca2b30c00bd1b41e)
+  to generate a GPG key
 
-  -
+- Windows
+  1. Install WSL using [this
+  guide](https://learn.microsoft.com/en-us/windows/wsl/install)
+  2. Follow the steps for Linux
+  Follow [this
+  guide](https://docs.gitlab.com/ee/user/project/repository/signed_commits/gpg.html#associate-your-gpg-key-with-git)
+  to set up Git to use it
+#### 3. Setup VPN
+To access our services inside the secure cluster you must connect to the VPN
 
-      -
-        1\. Install gpg using apt: `apt install gnupg` (or the package
-        manager for your distro)
-        2\. Follow [these
-        steps](https://docs.gitlab.com/ee/user/project/repository/signed_commits/gpg.html#create-a-gpg-key)
-        to generate a GPG key
+- Linux
+  1. Import the *.ovpn* in your VPN settings
+  2. Connect to it using you VPN credentials (**NOT** your secd credentials)
 
-:; MacOS
+- MacOS
+  1. Download and install OpenVPN client [here](https://openvpn.net/client-connect-vpn-for-mac-os/)
+  2. Import the *.ovpn* file in the client
+  3. Connect to it using you VPN credentials (NOT your secd  credentials)
 
-  -
+- Windows
+  1. Download and install OpenVPN client [here](https://openvpn.net/client-connect-vpn-for-mac-os/)
+  2. Import the *.ovpn* file in the client
+  3. Connect to it using you VPN credentials (NOT your secd credentials)
 
-      -
-        Follow [this
-        guide](https://gist.github.com/troyfontaine/18c9146295168ee9ca2b30c00bd1b41e)
-        to generate a GPG key
 
-:; Windows
+#### 4. GitLab
+1. Go to our [GitLab](https://gitlab.secd/)
+2. Sign in with your secd account by clicking "Login in with yoursecd account" under *or sign in with*.
+3. Create a clone password to be able to push your code (or pull private projects)
+    1. Navigate to your profile
+    2. Go to *Password* and set a password
+4. Upload your GPG key
+      Follow [this
+      guide](https://docs.gitlab.com/ee/user/project/repository/signed_commits/gpg.html#add-a-gpg-key-to-your-account)
+      to upload your public GPG key to your profile
 
-  -
-
-      -
-        1\. Install WSL using [this
-        guide](https://learn.microsoft.com/en-us/windows/wsl/install)
-        2\. Follow the steps for Linux
-
-<!-- end list -->
-
-  -
-    Follow [this
-    guide](https://docs.gitlab.com/ee/user/project/repository/signed_commits/gpg.html#associate-your-gpg-key-with-git)
-    to set up Git to use it
-
-<!-- end list -->
-
-  - 3\. VPN
-
-To access our services inside the secure cluster you must connect to the
-VPN
-
-:; Linux
-
-  -
-
-      -
-        1\. Import the *.ovpn* in your VPN settings
-        2\. Connect to it using you VPN credentials (NOT your secd
-        credentials)
-
-:; MacOS
-
-  -
-
-      -
-        1\. Download and install OpenVPN client
-        [here](https://openvpn.net/client-connect-vpn-for-mac-os/)
-        2\. Import the *.ovpn* file in the client
-        3\. Connect to it using you VPN credentials (NOT your secd
-        credentials)
-
-:; Windows
-
-  -
-
-      -
-        1\. Download and install OpenVPN client
-        [here](https://openvpn.net/client-connect-vpn-for-mac-os/)
-        2\. Import the *.ovpn* file in the client
-        3\. Connect to it using you VPN credentials (NOT your secd
-        credentials)
-
-<!-- end list -->
-
-  - 4\. GitLab
-    1\. Go to our [GitLab](https://gitlab.secd/)
-    2\. Sign in with your secd account by clicking "Login in with your
-    secd account" under *or sign in with*
-
-:; Create a clone password
-
-  -
-
-      -
-        In order to be able to push your code (or pull private projects)
-        you need to set a password in your profile
-        1\. Navigate to your profile
-        2\. Go to *Password* and set a password
-
-:; Upload your GPG key
-
-  -
-
-      -
-        Follow [this
-        guide](https://docs.gitlab.com/ee/user/project/repository/signed_commits/gpg.html#add-a-gpg-key-to-your-account)
-        to upload your public GPG key to your profile
-
-:; Create a project
-
-  -
-
-      -
-        1\. Choose one of our example projects at the bottom of this
-        page
-        2\. Fork it and create a public project
-        3\. Copy the URL under 'Clone with HTTPS'
-        4\. Run ` git clone  `<clone url> \[
-        5\. Enter your secd email-address and your 'GitLab clone
-        password' \[1\] \[2\]
+5. Create a project
+  1. Choose one of our example projects at the bottom of this
+  page
+  2. Fork it and create a public project
+  3. Copy the URL under 'Clone with HTTPS'
+  4. Run ` git clone  `<clone url>
+  5. Enter your secd email-address and your GitLab clone password [1] [2]
 
 ### Workflow
+After the setup is done, all you need to do is the following.\
+Edit ➜ Push ➜ Check result in GitLab ➜ Edit ➜ Push ➜ Check result in GitLab ...
 
-  -
-    After the setup is done, all you need to do is the following.
-    Edit -\> Push -\> Check result in GitLab -\> Edit -\> Push -\> Check
-    result in GitLab ...
+#### Push code
+1. Open the project in an editor, such as Visual Studio Code
+2. Edit something the repository (so Git can push something to
+GitLab)
+3. Run `git add . && git commit -S -m "some changes" && git push` [2] [3]
 
-:; Push code
-
-  -
-
-      -
-        1\. Open the project in an editor, such as Visual Studio Code
-        2\. Edit something the repository (so Git can push something to
-        GitLab)
-        3\. Run `git add . && git commit -S -m "some changes && git
-        push` \[2\] \[3\]
-
-:; Check results
-
-  -
-
-      -
-        After some time your results are available in a folder
-        */outputs* in a new branch of your repository.
-        The branch name contains the date of the run.
+#### Check results
+After some time your results are available in a folder
+*/outputs* in a new branch of your repository.
+The branch name contains the date of the run.
 
 ### Notes
-
-  -
-    \[1\] Inside WSL on Windows
-    \[2\] If you did not import the certificate authority, you need to
-    add `-c http.sslVerify=false`
-    \[3\] On Windows you might need to run the commands separately
-    (without &&)
+- [1] Inside WSL on Windows
+- [2] If you did not import the certificate authority, you need to add `-c http.sslVerify=false`
+- [3] On Windows you might need to run the commands separately (without &&)
 
 ## Next steps
 

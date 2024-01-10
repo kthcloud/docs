@@ -1,4 +1,6 @@
-[200px](/File:Rancher-logo.png "wikilink")
+# Rancher
+
+<img src="../../images/rancher_logo.png" width="40%">
 
 Rancher is used to manage all the Kubernetes clusters and their
 resources in kthcloud. Many of its features are not used however, such

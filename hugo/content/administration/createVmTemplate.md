@@ -28,7 +28,7 @@ Ensure the VM is Stopped when you are done.
 If using "Ubuntu 22.04 Cloud template", make sure to run
 "prepare-template.sh" before turning it off.
 
-[600px](/File:View-template-vm-volume.png "wikilink")
+<img src="../../images/view_template_vm_volume.png" width="70%">
 
 ## Prepare the download
 
@@ -37,11 +37,11 @@ Navigate to VM that you want to template, and find the root disk.
 Click "Download Volume". This will not actually download the volume, but
 prepare it for download and then give you a link.
 
-[400px](/File:Download-vm-template-volume.png "wikilink")
+<img src="../../images/download_vm_template_volume.png" width="35%">
 
 Copy the link.
 
-[400px](/File:Vm-template-volume-download-link.png "wikilink")
+<img src="../../images/vm_template_volume_download_link.png" width="35%">
 
 ## Download the template in the Template server
 
@@ -52,10 +52,9 @@ as system better.
 Login at <https://nas.cloud.cbh.kth.se> and navigate to "Jails" and
 enter the shell for the jail called "templates".
 
-Run `cd /opt/templates` then ` wget  `<cloudstack link>`  -O
- `<template name>
+Run `cd /opt/templates` then ` wget <cloudstack link> -O <template name>`
 
-[600px](/File:Truenas-template-jail.png "wikilink")
+<img src="../../images/truenas_template_jail.png" width="85%">
 
 ## Add the template to CloudStack
 
@@ -69,4 +68,5 @@ Ensure the template is synchronized to every Zone.
 
 Once the template is registered, ensure it is downloaded in every Zone.
 
+<img src="../../images/create_cloudstack_template_form.png" width="40%">
 [600px](/File:Create-cloudstack-template-form.png "wikilink")

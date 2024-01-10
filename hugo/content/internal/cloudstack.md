@@ -2,7 +2,9 @@
 title: CloudStack
 ---
 
-[200px](/File:Cloudstack-logo.png "wikilink")
+# CloudStack
+
+<img src="../../images/cloudstack_logo.png" width="75%">
 
 CloudStack is used as the base for VM provisioning and Kubernetes
 cluster creation.

@@ -6,13 +6,13 @@ title: Create a DNS entry
 
 ### Navigate to the GUI
 
-Url: https://dns.kthcloud.com[](https://dns.kthcloud.com/dashboard/)
+Url: [https://dns.kthcloud.com](https://dns.kthcloud.com/dashboard/)
 
 Click *Sign in using OpenID Connect* and enter your credentials.
 
 ### Click on the domain which you will create a subdomain to
 
-[478x133px| (png)](/File:Pdns-click-domain_large.png "wikilink")
+<img src="../../images/pdns_click_domain_large.png" width="85%">
 
 ### Add a CNAME record pointing to the parent domain
 
@@ -22,7 +22,7 @@ Nginx Proxy Manager will take care of internal redirection.
 Remember to click *Save* and then *Apply Changes* in the top right
 corner.
 
-[1000x153px| (png)](/File:Pdns-add-record_large.png "wikilink")
+<img src="../../images/pdns_add_record_large.png" width="85%">
 
 Keep in mind the changes might not propagate immediately due to caching,
 and changes could take up too a day to be seen.
@@ -33,5 +33,5 @@ set your DNS server to 130.237.83.246 temporarily.
 ## Tips and tricks
 
 ### DNS Lookup
-To check if your DNS is working you could https://dns.google/ to request
+To check if your DNS is working you could [https://dns.google](https://dns.google) to request
 the different DNS records.

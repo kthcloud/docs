@@ -1,4 +1,6 @@
-[200px](/File:Keycloak-logo.png "wikilink")
+# Keycloak
+
+<img src="../../images/keycloak_logo.png" width="15%">
 
 Keycloak is used as the IAM service for kthcloud.
 

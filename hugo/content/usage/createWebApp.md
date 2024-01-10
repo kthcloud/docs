@@ -2,7 +2,7 @@
 title: Create a web app
 ---
 
-# Host a Web app
+# Create a Web app
 Deployment is a service type offering hosted Docker containers at
 kthcloud. Starting with a repo with a Dockerfile, you can be up and
 running in minutes.
@@ -11,17 +11,13 @@ running in minutes.
 
 ### Navigate to the platform
 
-Go to https://cloud.cbh.kth.se/deploy
+Go to [https://cloud.cbh.kth.se/deploy](https://cloud.cbh.kth.se/deploy) and login by pressing the button in the top right corner.
 
-Press  [(png)](/File:Screenshot_from_2023-09-20_10-22-36.png "wikilink")  in
-the top right corner to log in
-
-(Preferred) [Sign in with KTH](/KTH_SSO "wikilink")
+If you have any trouble with the login, follow [this guide](/usage/setUpKthSso "wikilink") to troubleshoot KTH SSO.
 
 ### Create your deployment
 
-[(png)](/File:Screenshot_from_2023-09-20_10-26-50.png "wikilink") Click
-on *+ Create*
+Once at the dashboard, create the deployment using *+ Create*
 
 #### Name
 
@@ -29,7 +25,7 @@ This is globally unique and will determine your personal URL and how
 your app is accessed.  Choose something nice and short, as your users
 will see this.
 
-[<https://app-name.app.cloud.cbh.kth.se>](https://app-name.dev.cloud.cbh.kth.se)
+[<https://NAME.app.cloud.cbh.kth.se>](https://app-name.dev.cloud.cbh.kth.se)
 
 #### Connect GitHub repository
 
@@ -71,7 +67,7 @@ Any questions? Reach out on our Discord\!
 
 Click on your deployment in the resource list shown when logging in
 
-[(png)](/File:Screenshot_from_2023-09-20_10-41-46.png "wikilink")
+<img src="../../images/deploy_deployment_operations.png" width="50%">
 
 View your deployment by clicking on **Go to page**
 
