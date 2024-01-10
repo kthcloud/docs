@@ -1,7 +1,4 @@
----
-title: Introduction
-weight: 1
----
+[500px|center|link=](/File:kthcloud-default.png "wikilink")
 
 # Welcome to kthcloud\!
 

@@ -1,0 +1,137 @@
+---
+title: Create a virtual machine
+---
+
+# Create a virtual machine
+
+Virtual machines are the most flexible resource type on kthcloud. They
+are simply a virtual computer running the latest build of Ubuntu Server.
+You can use them for anything you would do on a physical server, without
+worrying about power outages, network issues and fan noise\!
+
+## Creating a VM
+
+### Navigate to the platform
+
+Go to https://cloud.cbh.kth.se/deploy
+
+Press  [(png)](/File:Screenshot_from_2023-09-20_10-22-36.png "wikilink")  in
+the top right corner to log in
+
+(Preferred) [Sign in with KTH](/KTH_SSO "wikilink")
+
+### Create your VM
+
+[(png)](/File:Screenshot_from_2023-09-20_10-26-50.png "wikilink") Click
+on *+ Create*
+
+#### Name
+
+This name will be the name of your VM, both in our portal and inside the
+actual vm. For example with name **galactus**, your bash prompt will be:
+**root@galactus**.
+
+#### SSH Key
+
+If you do not have SSH keys yet, upload one on your profile. You can
+create one using ssh-keygen <https://www.ssh.com/academy/ssh/keygen>
+
+Select your desired key, it will be copied into the VM at creation.
+
+Use it to login to the vm (keys in locations outside the default
+\~/.ssh/id_rsa can be used with the -i argument.
+
+Once your VM is up and running, it is possible to add more keys manually
+to allow access to other users. Add your new public keys as new lines in
+the \~/.ssh/authorized_keys file.
+
+#### Select specs
+
+Specs are the capacity of your VM. You can select CPU cores, RAM and
+disk size.
+
+  - CPU cores represent the number of threads that can be run
+    simultaneously. We recommend at least 2.
+  - RAM is the memory available in your VM
+  - Disk size is the size of the virtual internal disk in your VM.
+
+Your account has a quota which can be used however you wish, either with
+multiple small VMs or a single large one, this is up to you.
+
+### That's it\!
+
+If you have any questions, reach out on Discord :)
+
+## Using the VM
+
+### Attach a GPU
+
+A list of GPU may be available depending on your account's tier. Select
+**Lease GPU** and choose which card you want to attach. The card will be
+available to you for a finite timespan. When it expires, the card will
+remain attached to your VM, and usable, until someone else requests it.
+In this phase, you can renew the lease if you wish to keep it for
+another lease period.
+
+Ending the lease prematurely is always possible using the **End lease**
+button, and we hope you will return your GPU as soon as you are done
+with it, so others can use it.
+
+#### Installing drivers
+
+When attaching a GPU, you will need to install the appropriate drivers.
+Either you can use Ubuntu's built in command: **ubuntu-drivers install
+--gpgpu** (you may need to install the ubuntu-drivers package.
+
+You might also prefer to install the drivers yourself. In that case, you
+can install them using **apt install nvidia-driver-XXX-server** where
+XXX is the desired driver version.
+
+#### Snapshots
+
+Snapshots are a way to backup your VM before doing something risky. They
+create a checkpoint that you can revert to at any time. Snapshots will
+be created automatically sporadically, but we recommend creating them
+manually from time to time.
+
+#### Port forwarding
+
+Port forwarding allows you to access the VM over some custom port. For
+example, if you are running MongoDB on your VM, it will likely be
+running on 27017 inside the VM.
+
+To make this accessible externally, create a port forwarding rule with
+the name of your choice, perhaps "MongoDB", the port 27017, and TCP
+protocol. Once the rule is applied, you will receive the public port.
+This is the port which you can use in MongoDB Compass or in your
+connection string for other apps.
+
+Access it at vm.cloud.cbh.kth.se:YOUR_PUBLIC_PORT
+
+## FAQ
+
+### How can I make a nice URL to access HTTP apps on my VM
+
+To achieve this, we will use a VM and a deployment together. Running
+nginx on the deployment allows us to proxy the traffic to the VM on the
+appropriate port.
+
+Follow the instructions at <https://github.com/kthcloud/vm-nginx-proxy>
+(See README file)
+
+Remember that the name of the deployment you create will be its
+subdomain.
+
+### I can't login to my vm, it says "premission denied (publickey)"
+
+If you have created a ssh key in a location other than the default
+(usually \~/.ssh/id_rsa), you'll need to specify it when accessing your
+vm.
+
+You can use the -i argument:
+
+    ssh <user>@<host> -p <port> -i <filepath to your keyfile>
+
+If this still does not work, ensure the key you have uploaded to your
+profile is the public key, usually denoted by the **.pub** file
+extension, like **id_rsa.pub**.
