@@ -1,6 +1,6 @@
 # 📖 kthcloud/docs <img src=https://github.com/tillitis/dev-tillitis/actions/workflows/deploy.yaml/badge.svg >
 
-This repository contains all the code and content for kthcloud's documentation. It uses [Hugo](https://gohugo.io/), and this repository is inspired by [dev-tillitis](https://github.com/tillitis/dev-tillitis). 
+This repository contains all the code and content for kthcloud's documentation. It is inspired by [dev-tillitis](https://github.com/tillitis/dev-tillitis)and uses [Hugo](https://gohugo.io/). 
 
 The documenation is automatically built on every push, and it deployed to [https://docs.cloud.cbh.kth.se](https://docs.cloud.cbh.kth.se).
 
