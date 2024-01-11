@@ -1,1 +1,0 @@
-# Managing apps in Kubernetes
