@@ -73,15 +73,44 @@ Ending the lease prematurely is always possible using the **End lease**
 button, and we hope you will return your GPU as soon as you are done
 with it, so others can use it.
 
+<img src="../../images/vm_gpu.png" width="100%">
+
 #### Installing drivers
 
 When attaching a GPU, you will need to install the appropriate drivers.
-Either you can use Ubuntu's built in command: **ubuntu-drivers install
---gpgpu** (you may need to install the ubuntu-drivers package.
 
-You might also prefer to install the drivers yourself. In that case, you
-can install them using **apt install nvidia-driver-XXX-server** where
-XXX is the desired driver version.
+```bash
+# Ensure the system is up to date
+apt update && apt upgrade -y && apt autoremove -y
+# You may need to reboot the vm at this point
+
+# Install the drivers
+apt install nvidia-driver-XXX-server nvidia-utils-XXX-server -y` 
+# where XXX is the desired driver version, for example 535.
+```
+
+You can find the latest version at https://www.nvidia.com/en-us/drivers/unix/. Look for Linux x86_64/AMD64/EM64T, Latest Production Branch. 
+For example version 535.146.02 can be installed as nvidia-driver-535-server and nvidia-utils-535-server.
+
+After installation, you may need to reboot the vm, and then you can verify that the driver is installed using `nvidia-smi`. The output should look something like this:
+
+```bash
+root@raccoon:~# nvidia-smi
+Thu Jan 11 14:25:22 2024       
++---------------------------------------------------------------------------------------+
+| NVIDIA-SMI 535.129.03             Driver Version: 535.129.03   CUDA Version: 12.2     |
+|-----------------------------------------+----------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |         Memory-Usage | GPU-Util  Compute M. |
+|                                         |                      |               MIG M. |
+|=========================================+======================+======================|
+|   0  NVIDIA RTX A6000               Off | 00000000:00:06.0 Off |                  Off |
+| 30%   47C    P0              73W / 300W |      2MiB / 49140MiB |      0%      Default |
+|                                         |                      |                  N/A |
++-----------------------------------------+----------------------+----------------------+
+```
+
+
 
 #### Snapshots
 
@@ -102,21 +131,18 @@ protocol. Once the rule is applied, you will receive the public port.
 This is the port which you can use in MongoDB Compass or in your
 connection string for other apps.
 
-Access it at `vm.cloud.cbh.kth.se:<YOUR_PUBLIC_PORT>`
+Instructions to access it will be provided, they might be different depending on which zone your VM is in.
+
+<img src="../../images/vm_ports.png" width="100%">
+
+#### HTTP Proxy
+To access HTTP apps on your VM with a nice domain name, you can use the built in proxy feature of kthcloud.
+
+Select the desired local port forwarding rule, and enter a name. Your app will then be available at the URL listed in the table.
+
+<img src="../../images/vm_proxy.png" width="100%">
 
 ## FAQ
-
-### How can I make a nice URL to access HTTP apps on my VM
-
-To achieve this, we will use a VM and a deployment together. Running
-nginx on the deployment allows us to proxy the traffic to the VM on the
-appropriate port.
-
-Follow the instructions at <https://github.com/kthcloud/VM-nginx-proxy>
-(See README file)
-
-Remember that the name of the deployment you create will be its
-subdomain.
 
 ### I can't login to my VM, it says "premission denied (publickey)"
 
