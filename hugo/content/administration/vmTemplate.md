@@ -1,6 +1,8 @@
 ---
-title: Create a VM template
+title: VM Template
 ---
+
+# VM Template
 
 This guide will show how kthcloud manages VM templates and ensures that
 the templates are available in every zone.
