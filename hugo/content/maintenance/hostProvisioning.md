@@ -1,9 +1,4 @@
----
-title: Provision a host
----
-
-# Provision a host
-
+# Host Provisioning
 The workflow to provision a new host is mostly automated using
 PXE-booting using [MaaS](https://maas.io/) together with [cloud
 init](https://cloudinit.readthedocs.io/en/latest/). But there are some
