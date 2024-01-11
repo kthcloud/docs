@@ -1,5 +1,5 @@
 ---
-title: Create a web app
+title: "Resource: Deployments"
 ---
 
 # Create a Web app
@@ -13,7 +13,7 @@ running in minutes.
 
 Go to [https://cloud.cbh.kth.se/deploy](https://cloud.cbh.kth.se/deploy) and login by pressing the button in the top right corner.
 
-If you have any trouble with the login, follow [this guide](/usage/setUpKthSso "wikilink") to troubleshoot KTH SSO.
+If you have any trouble with the login, follow [this guide](/usage/kthSso "wikilink") to troubleshoot KTH SSO.
 
 ### Create your deployment
 

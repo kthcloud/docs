@@ -7,7 +7,7 @@ the templates are available in every zone.
 
 We host every template separately from CloudStack, as CloudStack
 integrate such a system better (cross-zone template synchronization by
-URL). This is hosted as a Jail in [TrueNAS](/TrueNAS "wikilink") in the
+URL). This is hosted as a Jail in [TrueNAS](../internal/trueNas "wikilink") in the
 Flemingsberg zone. It is exposed on IP <http://172.31.5.12> only
 accessible internally (through a VPN).
 
