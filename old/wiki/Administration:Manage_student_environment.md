@@ -29,7 +29,7 @@ Name of the groups, eg. data
 \-d, --domain
 
 Name of the domain for the groups to be sub domains to, eg.
-dev.kthcloud.com Default: dev.kthcloud.com
+dev.cloud.cbh.kth.se Default: dev.cloud.cbh.kth.se
 
 Example:
 
@@ -37,8 +37,8 @@ python create.py -n 20 -a 4 -g data
 
 This creates:
 
-20 \* 5 subdomains and proxy hosts called: data1.dev.kthcloud.com,
-api1.data1.dev.kthcloud.com ... data20.api4.dev.kthcloud.com 1
+20 \* 5 subdomains and proxy hosts called: data1.dev.cloud.cbh.kth.se,
+api1.data1.dev.cloud.cbh.kth.se ... data20.api4.dev.cloud.cbh.kth.se 1
 certificate including all the domains 20 namespaces in development
 cluster in Kubernetes including permissions 20 account in Keycloak and a
 list of username/password in the output folder Project in Harbor Docker
@@ -63,4 +63,4 @@ Name of the groups, eg. data
 \-d, --domain
 
 Name of the domain for the groups to be sub domains to, eg.
-dev.kthcloud.com Default: dev.kthcloud.com
+dev.cloud.cbh.kth.se Default: dev.cloud.cbh.kth.se

@@ -2,7 +2,7 @@
 
 ### Navigate to the GUI
 
-Url: https://dns.kthcloud.com[](https://dns.kthcloud.com/dashboard/)
+Url: https://dns.cloud.cbh.kth.se[](https://dns.cloud.cbh.kth.se/dashboard/)
 
 Click *Sign in using OpenID Connect* and enter your credentials.
 
