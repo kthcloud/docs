@@ -6,7 +6,7 @@ title: DNS Entry
 
 ### Navigate to the GUI
 
-Url: [https://dns.kthcloud.com](https://dns.kthcloud.com/dashboard/)
+Url: [dns.cloud.cbh.kth.se](https://dns.cloud.cbh.kth.se/)
 
 Click *Sign in using OpenID Connect* and enter your credentials.
 
