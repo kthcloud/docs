@@ -25,7 +25,10 @@ This is globally unique and will determine your personal URL and how
 your app is accessed.  Choose something nice and short, as your users
 will see this.
 
-[<https://NAME.app.cloud.cbh.kth.se>](https://app-name.dev.cloud.cbh.kth.se)
+[<https://{NAME}.app.cloud.cbh.kth.se>](https://app-name.dev.cloud.cbh.kth.se)
+
+The name must follow [RFC 1035](https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#rfc-1035-label-names) as it will be used in Kubernetes and as a subdomain.
+
 
 #### Connect GitHub repository
 
