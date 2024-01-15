@@ -30,7 +30,7 @@ The name must follow [RFC 1035](https://kubernetes.io/docs/concepts/overview/wor
 
 #### Connect GitHub repository
 
-<img src="deployment_login_with_github.png" />
+<img src="../images/deployment_login_with_github.png" />
 
 kthcloud deployments provide two options for CI/CD. You can either:
 
@@ -66,11 +66,11 @@ You'll need to provide
 
 Once your deployment is created, you will find a button to **Manage Storage**
 
-<img src="deployment_manage_storage.png" /> 
+<img src="../images/deployment_manage_storage.png" /> 
 
 Here you can browse your files and create folders. You might have to create the folder structure specified by your container, and restart it for it to work.
 
-<img src="filebrowser.png" />
+<img src="../images/filebrowser.png" />
 
 #### That's all :)
 
@@ -80,7 +80,7 @@ Any questions? Reach out on our Discord\!
 
 Click on your deployment in the resource list shown when logging in
 
-<img src="../../images/deploy_deployment_operations.png" width="50%">
+<img src="../images/deploy_deployment_operations.png" width="50%">
 
 View your deployment by clicking on **Visit page**
 
