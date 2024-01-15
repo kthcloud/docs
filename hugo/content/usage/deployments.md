@@ -11,13 +11,13 @@ running in minutes.
 
 Open the **Create** page with one of these buttons:
 
-<img src="../images/create_button.png" /> 
+<img src="../../images/create_button.png" /> 
 
-<img src="../images/create_button_small.png" />
+<img src="../../images/create_button_small.png" />
 
 #### Name
 
-<img src="../images/deployment_name.png" />
+<img src="../../images/deployment_name.png" />
 
 This is globally unique and will determine your personal URL and how
 your app is accessed.  Choose something nice and short, as your users
@@ -30,7 +30,7 @@ The name must follow [RFC 1035](https://kubernetes.io/docs/concepts/overview/wor
 
 #### Connect GitHub repository
 
-<img src="../images/deployment_login_with_github.png" />
+<img src="../../images/deployment_login_with_github.png" />
 
 kthcloud deployments provide two options for CI/CD. You can either:
 
@@ -41,7 +41,7 @@ We recommend skipping the GitHub repo and setting up GitHub Actions if you feel 
 
 #### Environment variables
 
-<img src="../images/deployment_envs.png" />
+<img src="../../images/deployment_envs.png" />
 
 Environment variables are accessible from inside your app. There is
 always one env available: **$PORT**, which indicates which port your app
@@ -51,7 +51,7 @@ Feel free to set any necessary envs for your app.
 
 #### Persistent storage
 
-<img src="../images/deployment_storage.png" />
+<img src="../../images/deployment_storage.png" />
 
 Persistent storage allows your deployment to save state between restarts
 and when pushing a new version.
@@ -66,11 +66,11 @@ You'll need to provide
 
 Once your deployment is created, you will find a button to **Manage Storage**
 
-<img src="../images/deployment_manage_storage.png" /> 
+<img src="../../images/deployment_manage_storage.png" /> 
 
 Here you can browse your files and create folders. You might have to create the folder structure specified by your container, and restart it for it to work.
 
-<img src="../images/filebrowser.png" />
+<img src="../../images/filebrowser.png" />
 
 #### That's all :)
 
@@ -80,7 +80,7 @@ Any questions? Reach out on our Discord\!
 
 Click on your deployment in the resource list shown when logging in
 
-<img src="../images/deploy_deployment_operations.png" width="50%">
+<img src="../../images/deploy_deployment_operations.png" width="50%">
 
 View your deployment by clicking on **Visit page**
 
