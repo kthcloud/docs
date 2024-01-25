@@ -24,9 +24,9 @@ purposes.
 
 #### Dashboard URL
 
-  - System: https://k8s.kthcloud.com
-  - Development: https://k8s.dev.kthcloud.com
-  - Production: https://k8s.prod.kthcloud.com
+  - System: https://k8s.cloud.cbh.kth.se
+  - Development: https://k8s.dev.cloud.cbh.kth.se
+  - Production: https://k8s.prod.cloud.cbh.kth.se
 
 <span id="create-your-docker-image"></span>
 
@@ -38,7 +38,7 @@ purposes.
 
 ''''''docker build . -t <my docker account>/<my docker image>
 or
-docker build . -t registry.kthcloud.com/<my project>/<my image>
+docker build . -t registry.cloud.cbh.kth.se/<my project>/<my image>
 
 <span id="login-in-to-the-registry"></span>
 
@@ -46,7 +46,7 @@ docker build . -t registry.kthcloud.com/<my project>/<my image>
 
 docker login
 or
-docker login registry.kthcloud.com *(Use your Harbor Robot account)*
+docker login registry.cloud.cbh.kth.se *(Use your Harbor Robot account)*
 
 <span id="push-your-image-to-the-registry"></span>
 
@@ -54,7 +54,7 @@ docker login registry.kthcloud.com *(Use your Harbor Robot account)*
 
 docker push <Docker Hub repo>/<my image>
 or
-docker push registry.kthcloud.com/<my project>/<my image>
+docker push registry.cloud.cbh.kth.se/<my project>/<my image>
 
 <span id="create-your-namespace"></span>
 

@@ -150,7 +150,7 @@ however easier to use the VM through the noVNC client.
 
 To enter the client:
 
-1.  Visit dashboard.kthcloud.com.
+1.  Visit dashboard.cloud.cbh.kth.se.
 2.  Go to Compute
 
 [image](/File:Use.png "wikilink")

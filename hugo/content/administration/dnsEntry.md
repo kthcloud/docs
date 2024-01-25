@@ -1,18 +1,18 @@
 ---
-title: Create a DNS entry
+title: DNS Entry
 ---
 
-# Create a DNS Entry
+# DNS Entry
 
 ### Navigate to the GUI
 
-Url: [https://dns.kthcloud.com](https://dns.kthcloud.com/dashboard/)
+Url: [dns.cloud.cbh.kth.se](https://dns.cloud.cbh.kth.se/)
 
 Click *Sign in using OpenID Connect* and enter your credentials.
 
 ### Click on the domain which you will create a subdomain to
 
-<img src="../../images/pdns_click_domain_large.png" width="85%">
+<img src="../../images/pdns_click_domain_large.png" width="45%">
 
 ### Add a CNAME record pointing to the parent domain
 
@@ -22,7 +22,7 @@ Nginx Proxy Manager will take care of internal redirection.
 Remember to click *Save* and then *Apply Changes* in the top right
 corner.
 
-<img src="../../images/pdns_add_record_large.png" width="85%">
+<img src="../../images/pdns_add_record_large.png" width="100%">
 
 Keep in mind the changes might not propagate immediately due to caching,
 and changes could take up too a day to be seen.

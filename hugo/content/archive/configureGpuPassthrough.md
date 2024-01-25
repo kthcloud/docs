@@ -55,8 +55,7 @@ Setting up the PCI passthrough
 2.  Paste the following lines and change the bus id placeholders, for
     example: 65:00.0 65:00.1 65:00.2 65:00.3.
 
-<!-- end list -->
-
+```sh
     #!/bin/sh
 
     PREREQ=""
@@ -80,22 +79,22 @@ Setting up the PCI passthrough
     done
 
     exit 0
+```
+3. sudo chmod +x /etc/initramfs-tools/scripts/init-top/vfio.sh
 
-    3. sudo chmod +x /etc/initramfs-tools/scripts/init-top/vfio.sh
-
-    4. sudo nano /etc/initramfs-tools/modules
+4. sudo nano /etc/initramfs-tools/modules
 
 <span>5. </span>Add the following line:
 
     options kvm ignore_msrs=1
 
-    6. sudo update-initramfs -u -k all
+6. sudo update-initramfs -u -k all
 
 <span id="verify-installation"></span>
 
 ## Verify installation
 
-Run **lspci -nnv** and find the GPU. Ensure that **Kernel driver
+Run `lspci -nnv` and find the GPU. Ensure that **Kernel driver
 <span>in</span> <span>use</span>: vfio-pci** 
 
 <span id="start-gpu-vm-in-cloudstack"></span>
@@ -109,19 +108,18 @@ Run **lspci -nnv** and find the GPU. Ensure that **Kernel driver
     <span>bus</span> placeholder, <span>for</span> example
     **<span>bus</span>='<span>0</span>x65**'
 
-<!-- end list -->
-
+```xml
     <devices>
-    <hostdev mode="subsystem" type="pci" managed="yes">
-    <driver name="vfio"/>
-    <source>
-    <address domain="0x0000" bus="0x65" slot="0x00" function="0x0"/>
-    </source>
-    <alias name="nvidia0"/>
-    <address type="pci" domain="0x0000" bus="0x00" slot="0x00" function="0x0"/>
-    </hostdev>
+        <hostdev mode="subsystem" type="pci" managed="yes">
+            <driver name="vfio"/>
+            <source>
+                <address domain="0x0000" bus="0x65" slot="0x00" function="0x0"/>
+            </source>
+            <alias name="nvidia0"/>
+            <address type="pci" domain="0x0000" bus="0x00" slot="0x00" function="0x0"/>
+        </hostdev>
     </devices>
-
+```
 
 If more cards are <span>to</span> be passed through <span>to</span>
 <span>a</span> single machine, see [this
@@ -156,34 +154,34 @@ sure <span>to</span> swap <span>the</span> placeholder <span>with</span>
 <span>the</span> bus id <span>of</span> <span>the</span> device
 <span>with</span> <span>the</span> wrong driver.
 
-    #!/bin/sh
+```sh
+#!/bin/sh
 
-    PCI_HID="0000:YOUR-BUS-ID-HERE"
+PCI_HID="0000:YOUR-BUS-ID-HERE"
 
-    echo -n "$PCI_HID" > /sys/bus/pci/drivers//unbind
+echo -n "$PCI_HID" > /sys/bus/pci/drivers//unbind
 
-    echo -n "$PCI_HID" > /sys/bus/pci/drivers/vfio-pci/bind
-
+echo -n "$PCI_HID" > /sys/bus/pci/drivers/vfio-pci/bind
+```
 
 If <span>it</span> is more than <span>one</span> device,
 <span>lines</span> <span>2</span><span>-4</span> can be copied
 <span>and</span> placed underneath.
 
-<span>3.</span> **sudo nano
-/etc/systemd/<span>system</span>/bind-gpu-drivers.service**
+<span>3.</span> `sudo nano/etc/systemd/system/bind-gpu-drivers.service`
 
 <span>4.</span> Paste <span>the</span> following <span>lines and</span>
 change <span>the</span> script location placeholder:
 
-    [Unit]
-    Description=Bind GPU drivers so CloudStack can use them
-    After=network-online.target
+```
+[Unit]
+Description=Bind GPU drivers so CloudStack can use them
+After=network-online.target
 
-    [Service]
-    ExecStart=your script location
+[Service]
+ExecStart=your script location
 
-    [Install]
-    WantedBy=multi-user.target
-
-5\. sudo systemctl enable bind-gpu-drivers.service && sudo systemctl
-start bind-gpu-drivers.service
+[Install]
+WantedBy=multi-user.target
+```
+5\. `sudo systemctl enable bind-gpu-drivers.service && sudo systemctl start bind-gpu-drivers.service`

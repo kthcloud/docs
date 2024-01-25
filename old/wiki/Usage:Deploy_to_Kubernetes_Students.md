@@ -53,11 +53,11 @@ teacher)
 
 Each of your application will receive a public URL.
 
-Frontend: *<group name>.dev.kthcloud.com* (<span>for example
-data2.dev.kthcloud.com</span>)
+Frontend: *<group name>.dev.cloud.cbh.kth.se* (<span>for example
+data2.dev.cloud.cbh.kth.se</span>)
 
-Backends: api\<1-5\>.<group name>.kthcloud.com (for example
-api2.data4.dev.kthcloud.com)
+Backends: api\<1-5\>.<group name>.cloud.cbh.kth.se (for example
+api2.data4.dev.cloud.cbh.kth.se)
 
 <span id="start-by-building-an-image-locally"></span>
 
@@ -80,7 +80,7 @@ try to proceed this step before your image is building. 
 
 Open a terminal and navigate to your app directory and run:
 
-*docker build ./ -t registry.kthcloud.com/ht2022/<group name>-<app>*
+*docker build ./ -t registry.cloud.cbh.kth.se/ht2022/<group name>-<app>*
 
 <span id="authenticate-to-the-registry"></span>
 
@@ -89,13 +89,13 @@ Open a terminal and navigate to your app directory and run:
 Use the credentials supplied by your teacher, such as *robot$...* and a
 long password
 
-*docker login registry.kthcloud.com*
+*docker login registry.cloud.cbh.kth.se*
 
 <span id="push-to-the-docker-registry"></span>
 
 ### 4\. Push to the Docker registry
 
-*docker push registry.kthcloud.com/data-ht2022/<group name>-<app>*
+*docker push registry.cloud.cbh.kth.se/data-ht2022/<group name>-<app>*
 
 <span id="create-your-app-in-kubernetes"></span>
 
@@ -105,7 +105,7 @@ long password
 
 ### 1\. Login to the Kubernetes dashboard
 
-Go to ''''<https://k8s.dev.kthcloud.com/> and sign in with your group
+Go to ''''<https://k8s.dev.cloud.cbh.kth.se/> and sign in with your group
 credentials. 
 
 Go to your group's namespace by clicking the drop-down menu in the
@@ -130,7 +130,7 @@ Backends: *ap1,* *api2*, *api3* or *api4*
 
 #### Container image
 
-registry.kthcloud.com/ht2022/*<group name>-<app>*
+registry.cloud.cbh.kth.se/ht2022/*<group name>-<app>*
 
 <span id="number-of-pods"></span>
 

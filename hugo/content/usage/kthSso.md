@@ -1,5 +1,5 @@
 ---
-title: Set up KTH SSO
+title: Sign in with KTH
 ---
 
 ## Welcome to kthcloud\!

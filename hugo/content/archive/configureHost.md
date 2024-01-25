@@ -59,7 +59,7 @@ Sweden (se)
 Current zones:
 Flemingsberg (flem)
 
-FQDN is hostname.kthcloud.com, so for example se-flem-001.kthcloud.com
+FQDN is hostname.cloud.cbh.kth.se, so for example se-flem-001.cloud.cbh.kth.se
 
 A list of generated but not yet allocated passwords are available at the
 bottom of the Credentials page.
@@ -153,7 +153,7 @@ through API is recommended if adding more than one host.
 
 ### GUI
 
-Login to the [dashboard](http://dashboard.kthcloud.com)
+Login to the [dashboard](http://dashboard.cloud.cbh.kth.se)
 
 Before adding a host, determine which cluster it should be added to. A
 cluster must contain hosts with homogeneous hardware, therefore **if a
@@ -193,7 +193,7 @@ guide](https://github.com/apache/cloudstack-cloudmonkey/wiki/Getting-Started)
 how to install CloudMonkey. Once installed, connect to the management
 server using:
 
-    (mycloud) 🐱 > set url http://dashboard.kthcloud.com/client/api
+    (mycloud) 🐱 > set url http://dashboard.cloud.cbh.kth.se/client/api
     (mycloud) 🐱 > set username <username>
     (mycloud) 🐱 > set password <password>
     (mycloud) 🐱 > sync
@@ -230,7 +230,7 @@ Add hosts using the following API-call:
 Install SSH keys on the machine by running the following command and
 change the local IP placeholder:
 
-    ssh-copy-id -o ProxyCommand="ssh -p 8022 -W %h:%p -q cloud@se-flem-001.kthcloud.com" cloud@<local IP>
+    ssh-copy-id -o ProxyCommand="ssh -p 8022 -W %h:%p -q cloud@se-flem-001.cloud.cbh.kth.se" cloud@<local IP>
 
 <span id="error-when-deploying-new-instance-in-cloudstack"></span>
 
