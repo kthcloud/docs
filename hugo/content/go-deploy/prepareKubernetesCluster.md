@@ -183,3 +183,25 @@ Using kubectl:
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/compumike/hairpin-proxy/v0.2.1/deploy.yml
 ```
+
+### 6. Add the cluster to go-deploy
+Edit go-deploy's config and add a new or edit an existing zone. 
+
+With CloudStack:
+```yaml
+zones:
+- name: my-zone
+    configSource:
+    type: cloudstack
+    clusterId: 
+    externalUrl: # External URL to the cluster (e.g. https://my-cluster.example.com:6443)
+```
+
+With Rancher:
+```yaml
+zones:
+- name: my-zone
+    configSource:
+    type: rancher
+    clusterId: 
+```
