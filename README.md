@@ -1,20 +1,17 @@
-# 📖 kthcloud/docs <img src=https://github.com/tillitis/dev-tillitis/actions/workflows/deploy.yaml/badge.svg >
+# 📖 kthcloud/docs <img src=https://github.com/kthcloud/docs/actions/workflows/deploy.yaml/badge.svg >
 
-This repository contains all the code and content for kthcloud's documentation. It is inspired by [dev-tillitis](https://github.com/tillitis/dev-tillitis) and uses [Hugo](https://gohugo.io/). 
+This repository contains all the code and content for kthcloud's documentation. It is inspired by [dev-tillitis](https://github.com/tillitis/dev-tillitis) and is built using [Hugo](https://gohugo.io/). 
 
-The documenation is automatically built on every push, and it deployed to [https://docs.cloud.cbh.kth.se](https://docs.cloud.cbh.kth.se).
+The documenation is automatically built on every push, and deployed to [https://docs.cloud.cbh.kth.se](https://docs.cloud.cbh.kth.se).
 
 ## Try locally
 
-You need to install [Hugo](https://gohugo.io/) before using it to generate a Hugo website.
-
-After that you can run the documentaion locally.
+You need to install [Hugo](https://gohugo.io/) to build the documentaion locally.
 ```
 cd hugo
 hugo server
 ...
 Web Server is available at http://localhost:1313/ 
-...
 ```
 
 ## Make edits
