@@ -81,7 +81,7 @@ are assumed to be available.
     14. Turn on the machine and wait for MaaS to finish the deployment
     15. Refresh and wait for machine to be under the category *Deployed*
 6.  Verify installation
-    1.  Go to the [dasboard](https://dashboard.cloud.cbh.kth.se)
+    1.  Go to the [dashboard](https://dashboard.cloud.cbh.kth.se)
     2.  Go to Infrastructure | Hosts
     3.  Verify that the new machine is present. NOTE\! It might take
         some time for it to appear in CloudStack as the machine will
