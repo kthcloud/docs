@@ -2,7 +2,9 @@
 title: kthcloud docs
 ---
 
-<img src="images/logo_dark.svg" alt="logo" title="logo" height="100px">
+<div style="text-align: center;">
+  <img src="images/logo_dark.svg" alt="logo" title="logo" style="width: 80%; max-width: 600px;">
+</div>
 
 # Welcome to kthcloud\!
 
