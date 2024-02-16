@@ -10,8 +10,9 @@ title: kthcloud docs
 
 We're thrilled that you're considering contributing to our project\!
 <b>kthcloud</b> is a student-run cloud provider that offers a free and
-open-source alternative to commercial cloud services. Our project is
-funded by KTH CBH and the Erasmus+ program of the European Union.
+open-source alternative to commercial cloud services. 
+
+Our project is proudly supported by a diverse group of partners, financial backing is provided by KTH CBH, the EU Erasmus+ program and the KTH Digitalisation Platform. We also receive invaluable computational support from KTH PDC via CoS
 
 The project was kickstarted by the thesis "Designing and implementing a
 private cloud for student and faculty software projects" by Pierre Le
