@@ -12,8 +12,8 @@ Each Kubernetes cluster in MAIA is managed by a central control plane (based on 
 
 The single MAIA clusters are based on [Kaapana](https://www.kaapana.ai/), which is a Kubernetes-based platform for providing open-source toolkits for AI in healthcare. Kaapana provides a set of tools for developing, deploying and managing AI models, and is designed to be easy to use and integrate with existing clinical workflows.
 
-To start up a MAIA cluster, follow the instructions in the [Start Single MAIA Cluster](start_maia_cluster.md) section.
+To start up a MAIA cluster, follow the instructions in the [Start Single MAIA Cluster](MAIA/start_maia_cluster.md) section.
 
-After following and completing the instructions in the [Start Single MAIA Cluster](start_maia_cluster.md) section, you will have a running MAIA cluster, and you can start configuring it ([Configure MAIA Cluster](configure_maia_cluster.md)) to support different cluster features and applications.
+After following and completing the instructions in the [Start Single MAIA Cluster](MAIA/start_maia_cluster.md) section, you will have a running MAIA cluster, and you can start configuring it ([Configure MAIA Cluster](MAIA/configure_maia_cluster.md)) to support different cluster features and applications.
 
 
