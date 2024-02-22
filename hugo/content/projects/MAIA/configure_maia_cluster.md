@@ -19,6 +19,14 @@ kubeconfig_path = "<PATH_TO_KUBECONFIG>"
 kube_context = "<CONTEXT_IN_KUBECONFIG>"
 admin_group = "<ADMIN:GROUP>"
 ```
+After setting the variables, run the following commands to apply the Terraform configuration:
+```shell
+cd MAIA/Terraform/Cluster_Permissions
+terraform init
+terraform plan
+terraform apply
+
+```
 
 ## Network Policies
 Calico is the chosen Container Network Interface, to create and manage network policies, as well as firewall rules and cluster roles.
@@ -163,6 +171,62 @@ EOF
 To expose the applications deployed on the MAIA cluster, a Kubernetes Ingress is used. The Ingress is a collection of rules that allow inbound connections to reach the cluster services. The Ingress controller is responsible for fulfilling the Ingress, usually with a load balancer.
 In the MAIA cluster, the Ingress controller is Traefik.
 
+## Storage Classes
+
+### Local Hostpath Storage
+Local hostpath storage is based on the local storage of the cluster nodes. It is used to store the data of the applications deployed on the cluster.
+In Microk8s, the hostpath volumes are created by default in the `/var/snap/microk8s/common/default-storage` directory.
+```shell
+microk8s enable hostpath-storage
+```
+### NFS Storage
+NFS storage is used to store the data of the applications deployed on the cluster on an NFS server.
+The NFS server is installed on the control-plane node and the NFS client is installed on the worker nodes.
+To enable NFS Storage, the nfs-common package should be installed on the cluster nodes:
+
+```shell
+sudo apt install -y nfs-common
+```
+In Microk8s, the NFS volumes are created by default in the `/var/snap/microk8s/common/nfs-storage` directory.
+```shell
+microk8s enable nfs -n <CONTROL_PLANE_NODE>
+```
+### Storage Configuration
+To create physical partitions on the local server storage, the Logical Volume Manager (LVM) is used. The LVM is a device mapper that provides logical volume management for the Linux kernel. The LVM allows the creation of logical volumes from physical volumes, and the resizing of logical volumes.
+
+#### Physical Volumes
+
+```shell
+sudo lvmdiskscan # List all physical volumes
+sudo pvcreate /dev/sda /dev/sdb # Create physical volumes
+```
+
+#### Volume Group
+
+```shell
+`` # Scan for volume groups
+sudo vgcreate volume_group_name /dev/sda /dev/sdb /dev/sdc # Create volume group
+sudo vgextend volume_group_name /dev/sdb # Extend volume group
+```
+
+#### Logical Volumes
+
+```shell
+sudo lvscan # Scan for logical volumes
+sudo lvcreate -L 10G -n test LVMVolGroup # Create logical volume
+sudo lvresize -L +5G --resizefs LVMVolGroup/test # Resize logical volume
+sudo mkfs -t ext4 LVMVolGroup/test # Format logical volume
+```
+
+#### Mounting Volumes
+
+Mount the logical volume to the directory for nfs in microk8s ( or alternatively, the local directory for
+hostpath-storage):
+
+```shell
+sudo mount /dev/LVMVolGroup/test /var/snap/microk8s/common/default-storage
+sudo mount /dev/LVMVolGroup/test /var/snap/microk8s/common/nfs-storage
+```
 
 ## Microk8s Addons
 The following Microk8s addons are enabled in the MAIA cluster:
