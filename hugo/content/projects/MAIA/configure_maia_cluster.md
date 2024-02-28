@@ -171,6 +171,20 @@ EOF
 To expose the applications deployed on the MAIA cluster, a Kubernetes Ingress is used. The Ingress is a collection of rules that allow inbound connections to reach the cluster services. The Ingress controller is responsible for fulfilling the Ingress, usually with a load balancer.
 In the MAIA cluster, the Ingress controller is Traefik.
 
+To deploy Traefik as the Ingress controller, first, set the following variables in the [Traefik](Terraform/Traefik) Terraform configuration:
+```terraform
+# MAIA/Terraform/Traefik/terraform.tfvars
+traefik_resolver = "<TRAEFIK_RESOLVER_NAME>"
+acme_email = "<ACME_EMAIL>"
+load_balancer_ip = "<LOAD_BALANCER_IP>"
+```
+Then, run the following commands to apply the Terraform configuration:
+```shell
+cd MAIA/Terraform/Traefik
+terraform init
+terraform plan
+terraform apply
+```
 ## Storage Classes
 
 ### Local Hostpath Storage
