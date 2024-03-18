@@ -37,7 +37,7 @@ are assumed to be available.
         that is used.
     3.  Note the MAC-address (take a photo\!)
     4.  Go to the Boot-order
-    5.  Set the connected network card to be first in the list
+    5.  Set the connected network card to be first in the lis"t
     6.  Turn off the machine
 2.  Generate a cloud-init file
     1.  Go to the admin GitHub repository
@@ -70,7 +70,7 @@ are assumed to be available.
     3.  Go to the 'Network Tab'
     4.  Tick the connected network card and Click 'Create bridge'
     5.  Enter 'cloudbr0' in 'Bridge name'
-    6.  Select 'vlan' to 'se-flem'. This will allow the selection of the correct subnet.
+    6.  Select 'Fabric' to the correct one for the zone, e.g. 'se-flem'. This will allow the selection of the correct subnet for the next step.
     7.  Select 'Subnet' for the zone, eg. 172.31.0.0/16
     8.  Select 'Static assign' in 'IP mode'
     9.  Enter the statis IP address of the host in 'IP address'
