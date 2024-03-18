@@ -37,7 +37,7 @@ are assumed to be available.
         that is used.
     3.  Note the MAC-address (take a photo\!)
     4.  Go to the Boot-order
-    5.  Set the connected network card to be first in the lis"t
+    5.  Set the connected network card to be first in the list
     6.  Turn off the machine
 2.  Generate a cloud-init file
     1.  Go to the admin GitHub repository
