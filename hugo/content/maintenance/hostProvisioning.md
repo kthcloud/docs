@@ -70,16 +70,17 @@ are assumed to be available.
     3.  Go to the 'Network Tab'
     4.  Tick the connected network card and Click 'Create bridge'
     5.  Enter 'cloudbr0' in 'Bridge name'
-    6.  Select 'Subnet' for the zone, eg. 172.31.0.0/16
-    7.  Select 'Static assign' in 'IP mode'
-    8.  Enter the statis IP address of the host in 'IP address'
-    9.  Click 'Save interface'
-    10. Click 'Take action' and 'Deploy'
-    11. Select the 'Release' and tick 'Cloud-int user-data'
-    12. Upload or paste the generated cloud-init file
-    13. Click 'Start deployment for machine'
-    14. Turn on the machine and wait for MaaS to finish the deployment
-    15. Refresh and wait for machine to be under the category *Deployed*
+    6.  Select 'se-flem' in fabric.
+    7.  Select 'Subnet' for the zone, eg. 172.31.0.0/16
+    8.  Select 'Static assign' in 'IP mode'
+    9.  Enter the statis IP address of the host in 'IP address'
+    10.  Click 'Save interface'
+    11. Click 'Take action' and 'Deploy'
+    12. Select the 'Release' and tick 'Cloud-int user-data'
+    13. Upload or paste the generated cloud-init file
+    14. Click 'Start deployment for machine'
+    15. Turn on the machine and wait for MaaS to finish the deployment
+    16. Refresh and wait for machine to be under the category *Deployed*
 6.  Verify installation
     1.  Go to the [dashboard](https://dashboard.cloud.cbh.kth.se)
     2.  Go to Infrastructure | Hosts
