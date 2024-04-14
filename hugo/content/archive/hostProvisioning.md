@@ -1,4 +1,7 @@
-# Host Provisioning
+# Host Provisioning (Archived 2024-04-14)
+
+**THIS IS AN OLD GUIDE. PLEASE REFER TO THE NEW GUIDE [HERE](hostProvisioning.md)**
+
 The workflow to provision a new host is mostly automated using
 PXE-booting using [MaaS](https://maas.io/) together with [cloud
 init](https://cloudinit.readthedocs.io/en/latest/). But there are some

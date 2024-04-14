@@ -1,7 +1,5 @@
 # Install Kubernetes Cluster
 
-**THIS IS AN OLD GUIDE. PLEASE REFER TO THE NEW GUIDE [HERE](installKubernetesCluster.md)**
-
 Before you start, this guide is intended you guide you through the creation of Kubernetes clusters in the **new** environment (where KubeVirt replaces CloudStack).
 
 ## Prerequisites
@@ -273,7 +271,30 @@ Hairpin-proxy is a proxy that allows us to access services in the cluster from w
 kubectl apply -f https://raw.githubusercontent.com/compumike/hairpin-proxy/v0.2.1/deploy.yml
 ```
 
-9. Add the cluster to go-deploy
+9. Install `KubeVirt`
+KubeVirt is what enables us to run VMs in the cluster. This is not mandatory, but it is required if the cluster is to be used for VMs.
+
+Install the KubeVirt operator and CRDs
+```bash
+export VERSION=$(curl -s https://storage.googleapis.com/kubevirt-prow/release/kubevirt/kubevirt/stable.txt)
+kubectl create -f https://github.com/kubevirt/kubevirt/releases/download/$VERSION/kubevirt-operator.yaml
+kubectl create -f https://github.com/kubevirt/kubevirt/releases/download/$VERSION/kubevirt-cr.yaml
+```
+
+Verify installation
+```bash
+kubectl get kubevirt.kubevirt.io/kubevirt -n kubevirt -o=jsonpath="{.status.phase}"
+```
+
+Install CDI (Containerized Data Importer)
+```bash
+export TAG=$(curl -s -w %{redirect_url} https://github.com/kubevirt/containerized-data-importer/releases/latest)
+export VERSION=$(echo ${TAG##*/})
+kubectl create -f https://github.com/kubevirt/containerized-data-importer/releases/download/$VERSION/cdi-operator.yaml
+kubectl create -f https://github.com/kubevirt/containerized-data-importer/releases/download/$VERSION/cdi-cr.yaml
+```
+
+10. Add the cluster to go-deploy
 Edit go-deploy's config and add a new or edit an existing zone. 
 ```yaml
 zones:

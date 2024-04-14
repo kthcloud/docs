@@ -4,6 +4,8 @@ PXE-booting using [MaaS](https://maas.io/) together with [cloud
 init](https://cloudinit.readthedocs.io/en/latest/). But there are some
 steps that are manual.
 
+This guide is designed for the new sys-cluster/deploy-cluster setup with KubeVirt. If you are setting up a CloudStack host, please refer to the [old guide](archive/hostProvisioning_old.md).
+
 ## Installation
 
 This guide will go through the entire workflow to setup up a brand new
@@ -53,11 +55,6 @@ host.
     12. Upload or paste the cloud-init file generated in **step 2**
     13. Click `Start deployment for machine`
     15. Wait for machine to be under the category `Deployed`
-6.  Verify installation (sys-cluster)
-    1. SSH into the node
-
-7.  Verify installation (deploy-cluster)
-
 
 ### Next steps
 If you did not deploy the first node in a cluster, you don't need to do anything more.

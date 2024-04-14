@@ -1,4 +1,4 @@
-# Configure GPU Passthrough
+# Configure GPU Passthrough  (Archived 2024-04-14)
 *DO NOT USE THIS - ONLY FOR REFERENCE - ALREADY AUTOMATED IN HOST SETUP SCRIPTS*
 
 This guide is aimed mainly for GPU without vGPU-support, as a
