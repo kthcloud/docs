@@ -33,3 +33,9 @@ Flemingsberg Zone
 **Restart**: Restart using the [dashboard](https://nas.cloud.cbh.kth.se)
 
 **Update**: Update using the [dashboard](https://nas.cloud.cbh.kth.se)
+
+## Hosted services
+
+| Name | IP | Description |
+| ---- | -- | ----------- |
+| templates | 172.31.5.12 | Storage for VM templates |

@@ -15,7 +15,7 @@ worrying about power outages, network issues and fan noise!
 
 Go to [https://cloud.cbh.kth.se/deploy](https://cloud.cbh.kth.se/deploy) and login by pressing the button in the top right corner.
 
-If you have any trouble with the login, follow [this guide](/usage/kthSso "wikilink") to troubleshoot KTH SSO.
+If you have any trouble with the login, follow [this guide](/usage/kthSso) to troubleshoot KTH SSO.
 
 ### Create your VM
 
