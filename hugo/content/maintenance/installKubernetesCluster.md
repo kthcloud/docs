@@ -67,7 +67,7 @@ helm upgrade --install cert-manager cert-manager \
   --set installCRDs=true
 ```
 
-3. Install Rancher
+3. Install `Rancher`
 
 Edit the variables as needed. The `hostname` variable is the URL that Rancher will be available at.
 
@@ -103,15 +103,15 @@ kubectl get svc -n ingress-nginx ingress-nginx-controller -o jsonpath='{.status.
 A deploy cluster is a Kubernetes cluster that is used for deploying applications and VMs for the users and is therefore controlled by go-deploy.
 This cluster is set up using Rancher, which means that a sys-cluster is required to manage it. 
 
-### Steps
+### Set up nodes
 1. Log in [Rancher](https://mgmt.cloud.cbh.kth.se) and create an empty cluster.
-2. Navigate to `Cluster Management` -> `Add Cluster` -> `Create` and select `Custom`
+2. Navigate to `Cluster Management` -> `Create` and select `Custom`
 3. Fill in the required details for your cluster, such as automatic snapshots to (MinIO)[https://minio.cloud.cbh.kth.se]. 
 4. Make sure to **untick** both `CoreDNS` and `NGINX Ingress` as they will be installed by Helm later.
 5. Click `Create` and wait for the cluster to be created.
-6. Deploy your node by following the Host Preparation guide.
+6. Deploy your node by following [Host provisioning guide](/maintenance/hostProvisioning.md).
 
-### Next steps
+### Install required services
 If you are deploying the first node in the cluster, you should follow the steps below. These steps assumes that every previous step has been completed.
 Make sure that the cluster you are deploying have atleast one node for each role (control-plane, etcd, and worker). 
 
@@ -294,12 +294,42 @@ kubectl create -f https://github.com/kubevirt/containerized-data-importer/releas
 kubectl create -f https://github.com/kubevirt/containerized-data-importer/releases/download/$VERSION/cdi-cr.yaml
 ```
 
-10. Add the cluster to go-deploy
-Edit go-deploy's config and add a new or edit an existing zone. 
-```yaml
-zones:
-- name: my-zone
-    configSource:
-    type: rancher
-    cluster:
+10. Install `Velero`
+Velero is a backup and restore tool for Kubernetes. It is used to backup the cluster in case of a disaster. Keep in mind that it does NOT backup persistent volumes in this configuration, but only the cluster state that points to the volumes. This means that the volumes must be backed up separately (either by the application using them or our TrueNAS storage solution).
+*Note: You will need the Velero CLI to use Velero commands. You can download it from the [Velero releases page](https://velero.io/docs/v1.8/basic-install)*
+
+Start by creating a bucket for Velero in [MinIO](https://minio.cloud.cbh.kth.se). The bucket will be used for all the files that Velero backs up.
+
+Set the following envs
+```bash
+export S3_ENDPOINT="https://minio.cloud.cbh.kth.se"
+export S3_BUCKET_NAME="velero-se-flem-deploy-2"
+export S3_KEY=""
+export S3_SECRET=""
 ```
+
+Install Velero using Helm
+```bash
+helm upgrade --install velero velero \
+  --repo https://vmware-tanzu.github.io/helm-charts \
+  --namespace velero \
+  --create-namespace \
+  --set backupsEnabled=true \
+  --set snapshotsEnabled=false \
+  --set configuration.backupStorageLocation[0].name=default \
+  --set configuration.backupStorageLocation[0].provider=aws \
+  --set configuration.backupStorageLocation[0].bucket=$S3_BUCKET_NAME \
+  --set configuration.backupStorageLocation[0].credential.name=cloud \
+  --set configuration.backupStorageLocation[0].credential.key=cloud \
+  --set configuration.backupStorageLocation[0].config.region=minio \
+  --set configuration.backupStorageLocation[0].config.s3ForcePathStyle=true \
+  --set configuration.backupStorageLocation[0].config.s3Url=$S3_ENDPOINT \
+  --set configuration.backupStorageLocation[0].config.publicUrl=$S3_ENDPOINT \
+  --set credentials.useSecret=true \
+  --set credentials.name=cloud \
+  --set credentials.secretContents.cloud="[default]\naws_access_key_id=$S3_KEY\naws_secret_access_key=$S3_SECRET"
+```
+
+### Next steps
+
+Finally, to make the cluster available to users, you need to configure the `go-deploy` service to use the new cluster. This is done by adding the cluster to the `go-deploy` configuration. You can find the development version of the configuration in the Admin repository and the production version in [kthcloud Drive](https://drive.cloud.cbh.kth.se).
