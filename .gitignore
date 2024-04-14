@@ -2,3 +2,9 @@ hugo/public
 hugo/resources
 hugo/.hugo_build.lock
 hugo/archetypes
+
+#MacOS
+.DS_Store
+
+#VSCode
+*.code-workspace
