@@ -42,14 +42,14 @@ host.
     6.  Click `Save machine`\
         The machine will be started by IPMI and will PXE-boot into commissioning
 5.  Deploy the machine
-    1.  Ensure the machine is turned off
+    1.  Ensure the machine is in `Ready` state
     2.  Go to the machine in MaaS
     3.  Go to the `Network Tab`
     4.  Find the connected NIC and in the drop-down menu click `Edit Phyiscal`
     5.  Select `Fabric` for the zone, eg. `se-flem`
     6.  Select `Subnet` for the zone, eg. `172.31.0.0/16`
     7.  Select `Static assign` in `IP mode`
-    8.  Enter the statis IP address of the host in `IP address`
+    8.  Enter the static IP address of the host in `IP address`
     9.  Click `Save interface`
     10. Click `Take action` and `Deploy` and tick `Cloud-int user-data`
     12. Upload or paste the cloud-init file generated in **step 2**
