@@ -85,6 +85,13 @@ helm upgrade --install rancher rancher \
   --set letsEncrypt.email=noreply@cloud.cbh.kth.se\
   --set letsEncrypt.ingress.class=nginx
 ```
+
+Wait for Rancher to be installed.
+
+```bash
+watch kubectl get pods -n cattle-system
+```
+
 ### 2. Update required DNS records
 Since the sys-cluster is used to manage other clusters, it is important that the DNS records are set up correctly. 
 
@@ -104,12 +111,17 @@ A deploy cluster is a Kubernetes cluster that is used for deploying applications
 This cluster is set up using Rancher, which means that a sys-cluster is required to manage it. 
 
 ### Set up nodes
-1. Log in [Rancher](https://mgmt.cloud.cbh.kth.se) and create an empty cluster.
-2. Navigate to `Cluster Management` -> `Create` and select `Custom`
-3. Fill in the required details for your cluster, such as automatic snapshots to (MinIO)[https://minio.cloud.cbh.kth.se]. 
-4. Make sure to **untick** both `CoreDNS` and `NGINX Ingress` as they will be installed by Helm later.
-5. Click `Create` and wait for the cluster to be created.
-6. Deploy your node by following [Host provisioning guide](/maintenance/hostProvisioning.md).
+1. Log in [Rancher](https://mgmt.cloud.cbh.kth.se)
+2. Navigate to `Global Settings` -> `Settings` and edit `auth-token-max-ttl-minutes` to `0` to disable token expiration.
+3. Click on the profile icon in the top right corner and select `Account & API Keys`.
+4. Create an API key that does not expire and save the key.\
+It will be used when creating cloud-init scripts for nodes connecting to the cluster.
+5. Navigate to `Cluster Management` -> `Create` and select `Custom`
+6. Fill in the required details for your cluster, such as automatic snapshots.
+7. Make sure to **untick** both `CoreDNS` and `NGINX Ingress` as they will be installed by Helm later.
+8. Click `Create` and wait for the cluster to be created.
+9. Deploy your node by following [Host provisioning guide](/maintenance/hostProvisioning.md).\
+Remember to use the API key you created in step 4 when creating the cloud-init script.
 
 ### Install required services
 If you are deploying the first node in the cluster, you should follow the steps below. These steps assumes that every previous step has been completed.
