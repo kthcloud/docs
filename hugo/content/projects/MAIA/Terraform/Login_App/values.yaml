@@ -1,0 +1,17 @@
+configOverwrites:
+  oidc:
+    scopes: [ openid,profile,email ] # groups excluded with Keycloak
+service:
+  type: ClusterIP
+
+
+ingress:
+  enabled: true
+
+config:
+  tls:
+    enabled: false
+  issuerInsecureSkipVerify: true
+  refreshToken: true
+env:
+  LOGINAPP_NAME: "MAIA Login"
