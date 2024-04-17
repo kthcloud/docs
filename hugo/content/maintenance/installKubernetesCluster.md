@@ -112,13 +112,13 @@ This cluster is set up using Rancher, which means that a sys-cluster is required
 
 ### Set up nodes
 1. Log in [Rancher](https://mgmt.cloud.cbh.kth.se)
-2. Navigate to `Global Settings` -> `Settings` and edit `auth-token-max-ttl-minutes` to `0` to disable token expiration.
+2. Navigate to `Global Settings` -> `Settings` and edit both `auth-token-max-ttl-minutes` and `kubeconfig-default-token-ttl-minutes` to `0` to disable token expiration.
 3. Click on the profile icon in the top right corner and select `Account & API Keys`.
 4. Create an API key that does not expire and save the key.\
 It will be used when creating cloud-init scripts for nodes connecting to the cluster.
 5. Navigate to `Cluster Management` -> `Create` and select `Custom`
 6. Fill in the required details for your cluster, such as automatic snapshots.
-7. Make sure to **untick** both `CoreDNS` and `NGINX Ingress` as they will be installed by Helm later.
+7. Make sure to **untick** `NGINX Ingress` as it will be installed by Helm later.
 8. Click `Create` and wait for the cluster to be created.
 9. Deploy your node by following [Host provisioning guide](/maintenance/hostProvisioning.md).\
 Remember to use the API key you created in step 4 when creating the cloud-init script.
@@ -140,15 +140,7 @@ export PDNS_API_KEY=
 export IP_POOL=
 ```
 
-2. Install `CoreDNS`
-```bash
-helm upgrade --install coredns coredns \
-  --repo https://coredns.github.io/helm \
-  --namespace kube-system \
-  --create-namespace
-```
-
-3. Install `Ingress-NGINX`
+2. Install `Ingress-NGINX`
 ```bash
 helm upgrade --install ingress-nginx ingress-nginx \
   --repo https://kubernetes.github.io/ingress-nginx \
@@ -157,7 +149,7 @@ helm upgrade --install ingress-nginx ingress-nginx \
   --set controller.ingressClassResource.default=true
 ```
 
-4. Install `cert-manager`
+3. Install `cert-manager`
 ```bash
 helm upgrade --install \
   cert-manager \
@@ -170,7 +162,7 @@ helm upgrade --install \
   --set installCRDs=true
 ```
 
-5. Install cert-manager Webhook for DNS challenges
+4. Install cert-manager Webhook for DNS challenges
 kthcloud uses PowerDNS for DNS management, so we need to install the cert-manager-webhook for PowerDNS.
 
 ```bash
@@ -182,7 +174,7 @@ helm install \
   --set groupName=${DOMAIN} \
 ```
 
-6. Install cert-manager issuer
+5. Install cert-manager issuer
 Now that we have the webhook installed, we need to install the issuer that will use the webhook to issue certificates.
 
 Create the PDNS secret (or any other DNS provider secret)
@@ -252,7 +244,7 @@ spec:
 EOF
 ```
 
-7. Install `MetalLB`
+6. Install `MetalLB`
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.14.4/config/manifests/metallb-native.yaml
 ```
@@ -276,14 +268,20 @@ metadata:
 EOF
 ```
 
-8. Install `hairpin-proxy`
+Add `metallb.universe.tf/allow-shared-ip: go-deploy` to Ingress-NGINX service to allow MetalLB to use the IP for VMs.
+Use Rancher GUI or edit the manifest directly or use the following command:
+```bash
+kubectl edit svc -n ingress-nginx ingress-nginx-controller
+```
+
+7. Install `hairpin-proxy`
 Hairpin-proxy is a proxy that allows us to access services in the cluster from within the cluster. This is needed for the webhook to be able to access the cert-manager service when validating DNS challenges.
 
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/compumike/hairpin-proxy/v0.2.1/deploy.yml
 ```
 
-9. Install `KubeVirt`
+8. Install `KubeVirt`
 KubeVirt is what enables us to run VMs in the cluster. This is not mandatory, but it is required if the cluster is to be used for VMs.
 
 Install the KubeVirt operator and CRDs
@@ -306,7 +304,7 @@ kubectl create -f https://github.com/kubevirt/containerized-data-importer/releas
 kubectl create -f https://github.com/kubevirt/containerized-data-importer/releases/download/$VERSION/cdi-cr.yaml
 ```
 
-10. Install `Velero`
+9. Install `Velero`
 Velero is a backup and restore tool for Kubernetes. It is used to backup the cluster in case of a disaster. Keep in mind that it does NOT backup persistent volumes in this configuration, but only the cluster state that points to the volumes. This means that the volumes must be backed up separately (either by the application using them or our TrueNAS storage solution).
 *Note: You will need the Velero CLI to use Velero commands. You can download it from the [Velero releases page](https://velero.io/docs/v1.8/basic-install)*
 
