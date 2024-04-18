@@ -5,7 +5,7 @@ For more information about Kaapana, see the [Kaapana documentation](https://kaap
 Kaapana is built on top of MicroK8s, a lightweight Kubernetes distribution that is designed for easy installation and management.
 
 ## Server Preparation
-The first step is to prepare the server that will host the MAIA cluster. The server should have at least 16GB of RAM and 4 CPU cores, and should be running Ubuntu 20.04.
+The first step is to prepare the server that will host the MAIA cluster. The server should have at least 16GB of RAM and 4 CPU cores, and should be running Ubuntu 22.04.
 
 Additionally, GPU support is recommended for running AI models, and the server should have at least one NVIDIA GPU installed.
 
