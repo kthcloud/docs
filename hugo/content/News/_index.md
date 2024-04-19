@@ -1,5 +1,4 @@
 ---
-title: go-deploy
 bookCollapseSection: true
-weight: 150
+weight: 1
 ---

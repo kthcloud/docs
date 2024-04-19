@@ -1,4 +1,4 @@
-# Configure a Host
+# Configure a Host (Archived 2024-04-14)
 *DO NOT USE THIS - ONLY FOR REFERENCE - ALREADY AUTOMATED WITH MAAS*
 
     Host device minimum recommended hardware requirements
