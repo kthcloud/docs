@@ -235,10 +235,10 @@ spec:
       app.kubernetes.io/deploy-name: deploy-wildcard-secret
   issuerRef: 
     kind: ClusterIssuer
-    name: letsencrypt-prod
+    name: go-deploy-cluster-issuer
   commonName: ""
   dnsNames:
-    - "*.apps.${DOMAIN}"
+    - "*.app.${DOMAIN}"
     - "*.vm-app.${DOMAIN}"
     - "*.storage.${DOMAIN}"
 EOF
@@ -278,7 +278,7 @@ kubectl edit svc -n ingress-nginx ingress-nginx-controller
 Hairpin-proxy is a proxy that allows us to access services in the cluster from within the cluster. This is needed for the webhook to be able to access the cert-manager service when validating DNS challenges.
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/compumike/hairpin-proxy/v0.2.1/deploy.yml
+kubectl apply -f https://raw.githubusercontent.com/JarvusInnovations/hairpin-proxy/v0.3.0/deploy.yml
 ```
 
 8. Install `KubeVirt`
