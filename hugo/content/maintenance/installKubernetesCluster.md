@@ -149,6 +149,14 @@ helm upgrade --install ingress-nginx ingress-nginx \
   --set controller.ingressClassResource.default=true
 ```
 
+Edit the created config map and add the following to the `data` section:
+```yaml
+data:
+  proxy-buffering: "on"
+  proxy-buffers: 4 "512k"
+  proxy-buffer-size: "256k"
+```
+
 3. Install `cert-manager`
 ```bash
 helm upgrade --install \
