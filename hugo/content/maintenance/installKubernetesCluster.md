@@ -117,7 +117,7 @@ This cluster is set up using Rancher, which means that a sys-cluster is required
 It will be used when creating cloud-init scripts for nodes connecting to the cluster.
 5. Navigate to `Cluster Management` -> `Create` and select `Custom`
 6. Fill in the required details for your cluster, such as automatic snapshots.
-7. Make sure to **untick** `NGINX Ingress` as it will be installed by Helm later.
+7. Make sure to **untick** both `NGINX Ingress` and `Metrics Server` as they will be installed by Helm later.
 8. Click `Create` and wait for the cluster to be created.
 9. Deploy your node by following [Host provisioning guide](/maintenance/hostProvisioning.md).\
 Remember to use the API key you created in step 4 when creating the cloud-init script.
@@ -282,6 +282,14 @@ Make sure that the cluster you are deploying have atleast one node for each role
     kubectl edit svc -n ingress-nginx ingress-nginx-controller
     ```
 
+7. Install `metrics-server`
+    ```bash
+    helm upgrade --install metrics-server metrics-server \
+      --repo https://kubernetes-sigs.github.io/metrics-server \
+      --namespace kube-system \
+      --create-namespace    
+    ```
+
 7. Install `hairpin-proxy`
 
     Hairpin-proxy is a proxy that allows us to access services in the cluster from within the cluster. This is needed for the webhook to be able to access the cert-manager service when validating DNS challenges.
@@ -314,7 +322,7 @@ Make sure that the cluster you are deploying have atleast one node for each role
     kubectl create -f https://github.com/kubevirt/containerized-data-importer/releases/download/$VERSION/cdi-cr.yaml
     ```
 
-9. Install `Velero`
+10. Install `Velero`
 
     Velero is a backup and restore tool for Kubernetes. It is used to backup the cluster in case of a disaster. Keep in mind that it does NOT backup persistent volumes in this configuration, but only the cluster state that points to the volumes. This means that the volumes must be backed up separately (either by the application using them or our TrueNAS storage solution).
     *Note: You will need the Velero CLI to use Velero commands. You can download it from the [Velero releases page](https://velero.io/docs/v1.8/basic-install)*
