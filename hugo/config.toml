@@ -3,7 +3,7 @@
 
 baseURL = 'https://docs.cloud.cbh.kth.se'
 title = 'kthcloud docs'
-theme = 'hugo-book-9'
+theme = 'book'
 
 # Book configuration
 disablePathToLower = true
