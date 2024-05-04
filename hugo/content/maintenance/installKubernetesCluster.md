@@ -18,18 +18,29 @@ This guide is only required if you are setting up a new sys-cluster. If you are 
 ### 1. Setup Rancher and dependencies
 You should SSH into a master node of the sys-cluster to run the following commands.
 
-1. Install `MetalLB`
+1. Set envs:
+    ```bash
+    # The root domain for your certificates.
+    # This will make rancher available at mgmt.${DOMAIN} and other sys-cluster services available at *.${DOMAIN}
+    export DOMAIN=
+    # API URL to the PDNS instance http://172.31.1.68:8081
+    export PDNS_API_URL=
+    # API key for the PDNS instance (base64 encoded)
+    export PDNS_API_KEY=
+    # IP_POOL for MetalLB, for example 172.31.100.100-172.31.100.150
+    export IP_POOL=
+    ```
+
+2. Install `MetalLB`
     ```bash
     kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.14.4/config/manifests/metallb-native.yaml
     ```
 
-2. Configure IP range for MetalLB
+3. Configure IP range for MetalLB
 
     Edit the `POOL` variable to match the IP range you want to use. The IP range should be within the subnet of the sys-cluster.
 
     ```bash
-    POOL="172.31.100.100-172.31.100.200"
-
     kubectl apply -f - <<EOF
     apiVersion: metallb.io/v1beta1
     kind: IPAddressPool
@@ -38,7 +49,7 @@ You should SSH into a master node of the sys-cluster to run the following comman
       namespace: metallb-system
     spec:
       addresses:
-      - $POOL
+      - $IP_POOL
     ---
     apiVersion: metallb.io/v1beta1
     kind: L2Advertisement
@@ -48,24 +59,39 @@ You should SSH into a master node of the sys-cluster to run the following comman
     EOF
     ```
 
-3. Install `Ingress-NGINX`
+4. Install `Ingress-NGINX`
     ```bash
     helm upgrade --install ingress-nginx ingress-nginx \
       --repo https://kubernetes.github.io/ingress-nginx \
       --namespace ingress-nginx \
       --create-namespace \
-      --set controller.ingressClassResource.default=true
+      --values - <<EOF
+    controller:
+      ingressClassResource:
+        default: "true"
+      config:
+        allow-snippet-annotations: "true"
+        proxy-buffering: "on"
+        proxy-buffers: 4 "512k"
+        proxy-buffer-size: "256k"
+    defaultBackend:
+      enabled: true
+      name: default-backend
+      image:
+        repository: dvdblk/custom-default-backend
+        tag: "latest"
+        pullPolicy: Always
+      port: 8080
+      extraVolumeMounts:
+        - name: tmp
+          mountPath: /tmp
+      extraVolumes:
+        - name: tmp
+          emptyDir: {}
+    EOF
     ```
 
-    Edit the created config map and add the following to the `data` section:
-    ```yaml
-    data:
-      allow-snippet-annotations: "true"
-      proxy-buffering: "on"
-      proxy-buffers: 4 "512k"
-      proxy-buffer-size: "256k"
-
-4. Install `cert-manager`
+5. Install `cert-manager`
     ```bash
     helm upgrade --install \
       cert-manager \
@@ -77,23 +103,119 @@ You should SSH into a master node of the sys-cluster to run the following comman
       --set 'extraArgs={--dns01-recursive-nameservers-only,--dns01-recursive-nameservers=8.8.8.8:53\,1.1.1.1:53}' \
       --set installCRDs=true
     ```
+6. Install cert-manager Webhook for DNS challenges
 
-5. Install `Rancher`
+    kthcloud uses PowerDNS for DNS management, so we need to install the cert-manager-webhook for PowerDNS.
+
+    ```bash
+    helm install cert-manager-webhook-powerdns-domain-1 cert-manager-webhook-powerdns \
+      --repo https://lordofsystem.github.io/cert-manager-webhook-powerdns \
+      --namespace cert-manager \
+      --set groupName=${DOMAIN}
+    ```
+
+
+7. Install cert-manager issuer
+
+    Now that we have the webhook installed, we need to install the issuer that will use the webhook to issue certificates.
+
+    Create the PDNS secret (or any other DNS provider secret)
+    ```bash
+    kubectl apply -f - <<EOF
+    kind: Secret
+    apiVersion: v1
+    metadata:
+      name: pdns-secret
+      namespace: cert-manager
+    data:
+      api-key: ${PDNS_API_KEY}
+    EOF
+    ```
+
+    Create the cluster issuer for *http01* and *dns01* challenges.
+    Keep in mind that if you need more than one root domain, you need to create a new issuer for each domain. The issuer name should be unique for each domain, for example `deploy-cluster-issuer-domain-1` and `deploy-cluster-issuer-domain-2`.
+
+    ```bash
+    kubectl apply -f - <<EOF
+    apiVersion: cert-manager.io/v1
+    kind: ClusterIssuer
+    metadata:
+      name: cluster-issuer-domain-1
+    spec:
+      acme:
+        server: https://acme-v02.api.letsencrypt.org/directory
+        email: noreply@${DOMAIN}
+        privateKeySecretRef:
+          name: letsencrypt-prod
+        solvers:
+          - http01:
+              ingress:
+                class: nginx
+          - dns01:
+              webhook:
+                groupName: ${DOMAIN}
+                solverName: pdns
+                config:
+                  zone: ${DOMAIN}
+                  secretName: pdns-secret
+                  zoneName: ${DOMAIN}
+                  apiUrl: ${PDNS_API_URL}
+    EOF
+    ```
+
+    Create wildcard certificate
+    ```bash
+    kubectl apply -f - <<EOF
+    apiVersion: cert-manager.io/v1
+    kind: Certificate
+    metadata:
+      name: wildcard-domain-1
+      namespace: ingress-nginx
+    spec:
+      secretName: wildcard-domain-1-secret
+      issuerRef: 
+        kind: ClusterIssuer
+        name: cluster-issuer-domain-1
+      commonName: ""
+      dnsNames:
+        - "*.${DOMAIN}"
+    EOF
+    ```
+
+    Create a fallback ingress so a certificate does not need to be specified on all ingresses
+    ```bash
+    kubectl apply -f - <<EOF
+    apiVersion: networking.k8s.io/v1
+    kind: Ingress
+    metadata:
+      name: fallback-ingress-se-flem
+      namespace: ingress-nginx
+    spec:
+      ingressClassName: nginx
+      tls:
+      - hosts:
+        - "*.cloud.cbh.kth.se"
+        secretName: kthcloud-wildcard-se-flem-secret
+      rules:
+      - host: "*.cloud.cbh.kth.se"
+    EOF
+    ```
+
+8. Install `Rancher`
 
     Edit the variables as needed. The `hostname` variable is the URL that Rancher will be available at.
 
     ```bash
     CHART_REPO="https://releases.rancher.com/server-charts/latest"
-    HOSTNAME="mgmt.cloud.cbh.kth.se"
 
     helm upgrade --install rancher rancher \
       --namespace cattle-system \
       --create-namespace \
       --repo $CHART_REPO \
-      --set hostname=$HOSTNAME \
+      --set hostname=mgmt.${DOMAIN} \
       --set bootstrapPassword=admin \
       --set ingress.tls.source=letsEncrypt \
-      --set letsEncrypt.email=noreply@cloud.cbh.kth.se\
+      --set letsEncrypt.email=noreply@${DOMAIN} \
       --set letsEncrypt.ingress.class=nginx
     ```
 
@@ -103,7 +225,7 @@ You should SSH into a master node of the sys-cluster to run the following comman
     watch kubectl get pods -n cattle-system
     ```
 
-6. Fix expiry date for secrets
+9. Fix expiry date for secrets
 
     Go to the Rancher URL deployed. The navigate to `Global Settings` -> `Settings` and edit both `auth-token-max-ttl-minutes` and `kubeconfig-default-token-ttl-minutes` to `0` to disable token expiration.
 
@@ -156,13 +278,12 @@ Make sure that the cluster you are deploying have atleast one node for each role
     export PDNS_API_URL=
     # API key for the PDNS instance (base64 encoded)
     export PDNS_API_KEY=
-    # IP_POOL for MetalLB, e.g. 172.31.50.100-172.31.50.150
+    # IP_POOL for MetalLB, for example 172.31.50.100-172.31.50.150
     export IP_POOL=
     # NFS server for the storage classes, for example nfs.cloud.cbh.kth.se
     export NFS_SERVER=
     # Base path for the different kind of storages that are used: disks, scratch and user storage
     export NFS_BASE_PATH=
-    ```
     ```
 
 2. Install `Ingress-NGINX`
@@ -171,16 +292,30 @@ Make sure that the cluster you are deploying have atleast one node for each role
       --repo https://kubernetes.github.io/ingress-nginx \
       --namespace ingress-nginx \
       --create-namespace \
-      --set controller.ingressClassResource.default=true
-    ```
-
-    Edit the created config map and add the following to the `data` section:
-    ```yaml
-    data:
-      allow-snippet-annotations: "true"
-      proxy-buffering: "on"
-      proxy-buffers: 4 "512k"
-      proxy-buffer-size: "256k"
+      --values - <<EOF
+    controller:
+      ingressClassResource:
+        default: "true"
+      config:
+        allow-snippet-annotations: "true"
+        proxy-buffering: "on"
+        proxy-buffers: 4 "512k"
+        proxy-buffer-size: "256k"
+    defaultBackend:
+      enabled: true
+      name: default-backend
+      image:
+        repository: dvdblk/custom-default-backend
+        tag: "latest"
+        pullPolicy: Always
+      port: 8080
+      extraVolumeMounts:
+        - name: tmp
+          mountPath: /tmp
+      extraVolumes:
+        - name: tmp
+          emptyDir: {}
+    EOF
     ```
 
 3. Install `cert-manager`
@@ -212,7 +347,7 @@ Make sure that the cluster you are deploying have atleast one node for each role
     Now that we have the webhook installed, we need to install the issuer that will use the webhook to issue certificates.
 
     Create the PDNS secret (or any other DNS provider secret)
-    ```yaml
+    ```bash
     kubectl apply -f - <<EOF
     kind: Secret
     apiVersion: v1
@@ -225,12 +360,12 @@ Make sure that the cluster you are deploying have atleast one node for each role
     ```
 
     Create the cluster issuer for *http01* and *dns01* challenges
-    ```yaml
+    ```bash
     kubectl apply -f - <<EOF
     apiVersion: cert-manager.io/v1
     kind: ClusterIssuer
     metadata:
-      name: go-deploy-cluster-issuer
+      name: deploy-cluster-issuer
     spec:
       acme:
         server: https://acme-v02.api.letsencrypt.org/directory
@@ -254,27 +389,50 @@ Make sure that the cluster you are deploying have atleast one node for each role
     ```
 
     Create wildcard certificate for all subdomains
-    ```yaml
+    ```bash
     kubectl apply -f - <<EOF
     apiVersion: cert-manager.io/v1
     kind: Certificate
     metadata:
-      name: go-deploy-wildcard
+      name: deploy-wildcard
       namespace: ingress-nginx
     spec:
-      secretName: go-deploy-wildcard-secret
+      secretName: deploy-wildcard-secret
       secretTemplate:
         labels:
           # This should match with the settings in go-deploy
           app.kubernetes.io/deploy-name: deploy-wildcard-secret
       issuerRef: 
         kind: ClusterIssuer
-        name: go-deploy-cluster-issuer
+        name: deploy-cluster-issuer
       commonName: ""
       dnsNames:
         - "*.app.${DOMAIN}"
         - "*.vm-app.${DOMAIN}"
         - "*.storage.${DOMAIN}"
+    EOF
+    ```
+
+    Create a fallback ingress so a certificate does not need to be specified on all ingresses
+    ```bash
+    kubectl apply -f - <<EOF
+    apiVersion: networking.k8s.io/v1
+    kind: Ingress
+    metadata:
+      name: fallback-ingress
+      namespace: ingress-nginx
+    spec:
+      ingressClassName: nginx
+      tls:
+      - hosts:
+        - "*.app.cloud.cbh.kth.se"
+        - "*.vm-app.cloud.cbh.kth.se"
+        - "*.storage.cloud.cbh.kth.se"
+        secretName: deploy-wildcard-secret
+      rules:
+      - host: "*.app.cloud.cbh.kth.se"
+      - host: "*.vm-app.cloud.cbh.kth.se"
+      - host: "*.storage.cloud.cbh.kth.se"
     EOF
     ```
 
