@@ -57,12 +57,24 @@ You should SSH into a master node of the sys-cluster to run the following comman
       --set controller.ingressClassResource.default=true
     ```
 
+    Edit the created config map and add the following to the `data` section:
+    ```yaml
+    data:
+      allow-snippet-annotations: "true"
+      proxy-buffering: "on"
+      proxy-buffers: 4 "512k"
+      proxy-buffer-size: "256k"
+
 4. Install `cert-manager`
     ```bash
-    helm upgrade --install cert-manager cert-manager \
+    helm upgrade --install \
+      cert-manager \
+      cert-manager \
       --repo https://charts.jetstack.io \
       --namespace cert-manager \
       --create-namespace \
+      --version v1.12.0 \
+      --set 'extraArgs={--dns01-recursive-nameservers-only,--dns01-recursive-nameservers=8.8.8.8:53\,1.1.1.1:53}' \
       --set installCRDs=true
     ```
 
@@ -91,6 +103,10 @@ You should SSH into a master node of the sys-cluster to run the following comman
     watch kubectl get pods -n cattle-system
     ```
 
+6. Fix expiry date for secrets
+
+    Go to the Rancher URL deployed. The navigate to `Global Settings` -> `Settings` and edit both `auth-token-max-ttl-minutes` and `kubeconfig-default-token-ttl-minutes` to `0` to disable token expiration.
+
 ### 2. Update required DNS records
 Since the sys-cluster is used to manage other clusters, it is important that the DNS records are set up correctly. 
 
@@ -109,18 +125,20 @@ Since the sys-cluster is used to manage other clusters, it is important that the
 A deploy cluster is a Kubernetes cluster that is used for deploying applications and VMs for the users and is therefore controlled by go-deploy.
 This cluster is set up using Rancher, which means that a sys-cluster is required to manage it. 
 
-### Set up nodes
 1. Log in [Rancher](https://mgmt.cloud.cbh.kth.se)
-2. Navigate to `Global Settings` -> `Settings` and edit both `auth-token-max-ttl-minutes` and `kubeconfig-default-token-ttl-minutes` to `0` to disable token expiration.
-3. Click on the profile icon in the top right corner and select `Account & API Keys`.
-4. Create an API key that does not expire and save the key.\
-It will be used when creating cloud-init scripts for nodes connecting to the cluster.
-5. Navigate to `Cluster Management` -> `Create` and select `Custom`
-6. Fill in the required details for your cluster, such as automatic snapshots.
-7. Make sure to **untick** both `NGINX Ingress` and `Metrics Server` as they will be installed by Helm later.
-8. Click `Create` and wait for the cluster to be created.
-9. Deploy your node by following [Host provisioning guide](/maintenance/hostProvisioning.md).\
+2. Navigate to `Cluster Management` -> `Create` and select `Custom`
+3. Fill in the required details for your cluster, such as automatic snapshots.
+4. Make sure to **untick** both `NGINX Ingress` and `Metrics Server` as they will be installed later.
+5. Click `Create` and wait for the cluster to be created.
+6. Deploy your node by following [Host provisioning guide](/maintenance/hostProvisioning.md).\
 Remember to use the API key you created in step 4 when creating the cloud-init script.
+
+### Aquire API token
+If this is the first deploy cluster for the Rancher setup, you need to create an API key to use when creating the cluster. The API key ise used to automatically add the new cluster node to the cluster. If you have already created a cluster, you probably already have an API key in the `admin` repo in the `cloud-init` settings. 
+
+1. Click on the profile icon in the top right corner and select `Account & API Keys`.
+2. Create an API key that does not expire and save the key.\
+It will be used when creating cloud-init scripts for nodes connecting to the cluster.
 
 ### Install required services
 If you are deploying the first node in the cluster, you should follow the steps below. These steps assumes that every previous step has been completed.
@@ -128,14 +146,23 @@ Make sure that the cluster you are deploying have atleast one node for each role
 
 1. Set envs:
     ```bash
-    # e.g. example.com if you want to issue certificates for *.app.cloud.cbh.kth.se
+    # The root domain for your certificates. 
+    # For example: cloud.cbh.kth.se if you want to issue certificates for:
+    # - *.app.cloud.cbh.kth.se
+    # - *.vm-app.cloud.cbh.kth.se
+    # - *.storage.cloud.cbh.kth.se
     export DOMAIN=
-    # API URL to the PDNS instance http://172.31.0.68:8081
+    # API URL to the PDNS instance http://172.31.1.68:8081
     export PDNS_API_URL=
     # API key for the PDNS instance (base64 encoded)
     export PDNS_API_KEY=
     # IP_POOL for MetalLB, e.g. 172.31.50.100-172.31.50.150
     export IP_POOL=
+    # NFS server for the storage classes, for example nfs.cloud.cbh.kth.se
+    export NFS_SERVER=
+    # Base path for the different kind of storages that are used: disks, scratch and user storage
+    export NFS_BASE_PATH=
+    ```
     ```
 
 2. Install `Ingress-NGINX`
@@ -150,6 +177,7 @@ Make sure that the cluster you are deploying have atleast one node for each role
     Edit the created config map and add the following to the `data` section:
     ```yaml
     data:
+      allow-snippet-annotations: "true"
       proxy-buffering: "on"
       proxy-buffers: 4 "512k"
       proxy-buffer-size: "256k"
@@ -159,7 +187,7 @@ Make sure that the cluster you are deploying have atleast one node for each role
     ```bash
     helm upgrade --install \
       cert-manager \
-      jetstack/cert-manager \
+      cert-manager \
       --repo https://charts.jetstack.io \
       --namespace cert-manager \
       --create-namespace \
@@ -173,12 +201,10 @@ Make sure that the cluster you are deploying have atleast one node for each role
     kthcloud uses PowerDNS for DNS management, so we need to install the cert-manager-webhook for PowerDNS.
 
     ```bash
-    helm install \
-      --namespace cert-manager \
+    helm install cert-manager-webhook-powerdns-domain-1 cert-manager-webhook-powerdns \
       --repo https://lordofsystem.github.io/cert-manager-webhook-powerdns \
-      cert-manager-webhook-powerdns-cloud-cbh-kth-se \
-      cert-manager-webhook-powerdns/cert-manager-webhook-powerdns \
-      --set groupName=${DOMAIN} \
+      --namespace cert-manager \
+      --set groupName=${DOMAIN}
     ```
 
 5. Install cert-manager issuer
@@ -290,7 +316,7 @@ Make sure that the cluster you are deploying have atleast one node for each role
       --create-namespace    
     ```
 
-7. Install `hairpin-proxy`
+8. Install `hairpin-proxy`
 
     Hairpin-proxy is a proxy that allows us to access services in the cluster from within the cluster. This is needed for the webhook to be able to access the cert-manager service when validating DNS challenges.
 
@@ -298,7 +324,19 @@ Make sure that the cluster you are deploying have atleast one node for each role
     kubectl apply -f https://raw.githubusercontent.com/JarvusInnovations/hairpin-proxy/v0.3.0/deploy.yml
     ```
 
-8. Install `KubeVirt`
+    Edit the created `hairpin-proxy-controller` deployment in the `hairpin-proxy` namespace using Rancher or:
+    ```bash
+    kubectl edit deployment hairpin-proxy-controller -n hairpin-proxy
+    ````
+    Change the environment variables to be the following:
+    ```yaml
+    - name: COREDNS_CONFIGMAP_NAME
+      value: rke2-coredns-rke2-coredns
+    - name: COREDNS_IMPORT_CONFIG
+      value: 'false'
+    ```
+
+9. Install `KubeVirt`
 
     KubeVirt is what enables us to run VMs in the cluster. This is not mandatory, but it is required if the cluster is to be used for VMs.
 
@@ -322,7 +360,59 @@ Make sure that the cluster you are deploying have atleast one node for each role
     kubectl create -f https://github.com/kubevirt/containerized-data-importer/releases/download/$VERSION/cdi-cr.yaml
     ```
 
-10. Install `Velero`
+10. Install required storage classes
+
+    This step is only necessary if you installed KubeVirt in the previous step. The storage classes are used to define the storage that the VMs will use, and uses 2 storage classes for different purposes. User storage does not use a storage class and instead manually creates PV and PVCs (so it needs to be configured in the configuration later on).
+
+    ```bash
+    kubectl apply -f - <<EOF
+    apiVersion: storage.k8s.io/v1
+    kind: StorageClass
+    metadata:
+      name: deploy-vm-disks
+    parameters:
+      server: ${NFS_SERVER}
+      share: /mnt/cloud/apps/sys/deploy/vms/disks
+    provisioner: nfs.csi.k8s.io
+    reclaimPolicy: Delete
+    volumeBindingMode: Immediate
+    EOF
+    ```
+
+    ```bash
+    kubectl apply -f - <<EOF
+    apiVersion: storage.k8s.io/v1
+    kind: StorageClass
+    metadata:
+      name: deploy-vm-scratch
+    parameters:
+      server: ${NFS_SERVER}
+      share: /mnt/cloud/apps/sys/deploy/vms/scratch
+    provisioner: nfs.csi.k8s.io
+    reclaimPolicy: Delete
+    volumeBindingMode: Immediate
+    EOF
+    ```
+
+11. Edit the `CDI` installation to use the scratch space storage classes
+
+    This step is only necessary if you installed KubeVirt in the previous step. The CDI operator uses the scratch space storage class to store temporary data when importing VMs.
+
+    Edit the CDI instance in the `cdi` namespace using Rancher or the following command:
+    ```bash
+    kubectl edit cdi cdi -n cdi
+    ```
+
+    Change the `scratchSpaceStorageClass` to `deploy-vm-scratch`
+    ```yaml
+    spec:
+      config:
+        scratchSpaceStorageClass: deploy-vm-scratch
+    ```
+
+12. Install `Velero`
+
+    **This step is currently WIP. You can skip this step for now.**
 
     Velero is a backup and restore tool for Kubernetes. It is used to backup the cluster in case of a disaster. Keep in mind that it does NOT backup persistent volumes in this configuration, but only the cluster state that points to the volumes. This means that the volumes must be backed up separately (either by the application using them or our TrueNAS storage solution).
     *Note: You will need the Velero CLI to use Velero commands. You can download it from the [Velero releases page](https://velero.io/docs/v1.8/basic-install)*
@@ -361,4 +451,4 @@ Make sure that the cluster you are deploying have atleast one node for each role
 
 ### Next steps
 
-Finally, to make the cluster available to users, you need to configure the `go-deploy` service to use the new cluster. This is done by adding the cluster to the `go-deploy` configuration. You can find the development version of the configuration in the Admin repository and the production version in [kthcloud Drive](https://drive.cloud.cbh.kth.se).
+Finally, to make the cluster available to users, you need to configure the `go-deploy` service to use the new cluster. This is done by adding the cluster to the `go-deploy` configuration. You can find the development version of the configuration in the `admin` repository and the production version in [kthcloud Drive](https://drive.cloud.cbh.kth.se) under `apps/sys/deploy/config`.
