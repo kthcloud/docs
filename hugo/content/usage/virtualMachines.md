@@ -73,7 +73,7 @@ apt update && apt upgrade -y && apt autoremove -y
 # You may need to reboot the vm at this point
 
 # Install the drivers
-apt install nvidia-driver-XXX-server nvidia-utils-XXX-server -y` 
+apt install nvidia-driver-XXX-server nvidia-utils-XXX-server -y 
 # where XXX is the desired driver version, for example 535.
 ```
 
