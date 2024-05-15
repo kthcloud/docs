@@ -362,11 +362,10 @@ You should SSH into a master node of the sys-cluster to run the following comman
     EOF
     ```
 
-    Then create install Harbor using Helm. Version v1.10.0 (Harbor version 2.6.0)
+    Then create install Harbor using Helm
     ```bash
     helm upgrade --install harbor harbor \
       --repo https://helm.goharbor.io \
-      --version v1.10.0 \
       --namespace harbor \
       --create-namespace \
       --values - <<EOF
