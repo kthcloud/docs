@@ -18,17 +18,26 @@ This guide is only required if you are setting up a new sys-cluster. If you are 
 ### 1. Setup Rancher and dependencies
 You should SSH into a master node of the sys-cluster to run the following commands.
 
-1. Set envs:
+1. Set envs (you need to set some of them manually, or edit them for your environment):
     ```bash
-    # The root domain for your certificates.
-    # This will make rancher available at mgmt.${DOMAIN} and other sys-cluster services available at *.${DOMAIN}
-    export DOMAIN=
-    # API URL to the PDNS instance http://172.31.1.68:8081
-    export PDNS_API_URL=
-    # API key for the PDNS instance (base64 encoded)
-    export PDNS_API_KEY=
-    # IP_POOL for MetalLB, for example 172.31.100.100-172.31.100.150
-    export IP_POOL=
+    # Cluster Configuration
+    export DOMAIN="cloud.cbh.kth.se"
+    export IP_POOL="172.31.100.100-172.31.100.150"
+  
+    # PDNS Configuration
+    export PDNS_API_URL="http://172.31.1.68:8081"
+    export PDNS_API_KEY=[base64 encoded]
+    
+    # NFS Configuration
+    export NFS_SERVER="nfs.cloud.cbh.kth.se"
+    export CLUSTER_NFS_PATH="/mnt/cloud/apps/sys"
+
+    # S3 Configuration
+    export S3_ENDPOINT="s3.cloud.cbh.kth.se"
+    
+    export LOKI_S3_BUCKET_PREFIX="loki"
+    export LOKI_S3_ACCESS_KEY=
+    export LOKI_S3_SECRET_KEY=
     ```
 
 2. Install `MetalLB`
@@ -229,6 +238,199 @@ You should SSH into a master node of the sys-cluster to run the following comman
 
     Go to the Rancher URL deployed. The navigate to `Global Settings` -> `Settings` and edit both `auth-token-max-ttl-minutes` and `kubeconfig-default-token-ttl-minutes` to `0` to disable token expiration.
 
+10. Install NFS CSI provisioner
+
+    The NFS provisioner allows automatic creation of PVs and PVCs for NFS storage. 
+
+    ```bash
+    helm install csi-driver-nfs csi-driver-nfs \
+      --repo https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/charts \
+      --namespace kube-system \
+      --version v4.7.0
+    ```
+
+11. Install miscellaneous storage class
+
+    It's convienient to have a storage class for general use. Since storage is implemented on a per-cluster basis. You need to edit the following manifest so it fits your environment. The manifest below is configured for the `sys` cluster in the zone `se-flem`.
+
+    ```bash
+    kubectl apply -f - <<EOF
+    apiVersion: storage.k8s.io/v1
+    kind: StorageClass
+    metadata:
+      name: kthcloud-misc
+    parameters:
+      server: nfs.cloud.cbh.kth.se
+      share: /mnt/cloud/apps/sys/misc
+    provisioner: nfs.csi.k8s.io
+    reclaimPolicy: Delete
+    volumeBindingMode: Immediate
+    EOF
+    ```
+
+12. Setup monitoring
+  
+    Rancher has built-in monitoring using Prometheus and Grafana. To enable monitoring, you need to install the monitoring stack. Go to the cluster in Rancher then `Apps > Charts` and install `Monitoring`.
+    
+    Bonus points if you use the misc storage class you created in the previous step!
+
+13. Install Loki
+  
+    Loki is used to collect logs from the cluster. It requries S3 storage, which you need to configure. The example below uses the S3 endpoint from MinIO in zone `se-flem`.
+
+    ```bash
+    helm upgrade --install loki loki \
+      --repo https://grafana.github.io/helm-charts \
+      --namespace loki \
+      --create-namespace \
+      --values - <<EOF
+      loki:
+        auth_enabled: false
+        commonConfig:
+          replication_factor: 1
+        storage:
+          type: 's3'
+          bucketNames:
+            chunks: loki-chunks
+            ruler: loki-ruler
+            admin: loki-admin
+          s3:
+            endpoint: ${S3_ENDPOINT}
+            region: us-east-1
+            secretAccessKey: ${LOKI_S3_SECRET_KEY}
+            accessKeyId: ${LOKI_S3_ACCESS_KEY}
+            s3ForcePathStyle: true
+            insecure: false
+            
+        schemaConfig:
+          configs:
+          - from: 2024-01-01
+            store: tsdb
+            index:
+              prefix: loki_index_
+              period: 24h
+            object_store: filesystem
+            schema: v13
+      read:
+        replicas: 1
+      backend:
+        replicas: 1
+      write:
+        replicas: 1
+    EOF
+    ```
+
+14. Install Harbor
+
+    Harbor is used to store container images. It is setup up with a pre-existing PVC that points it its data.
+    The example below is configured for the `sys` cluster in the zone `se-flem`.
+
+    Start by creating a PV and PVC for the Harbor data:
+    ```bash
+    kubectl apply -f - <<EOF
+    apiVersion: v1
+    kind: Namespace
+    metadata:
+      name: harbor
+    ---
+    apiVersion: v1
+    kind: PersistentVolume
+    metadata:
+      name: pv-harbor
+    spec:
+      storageClassName: kthcloud-manual
+      capacity:
+        storage: 100Gi
+      accessModes:
+        - ReadWriteMany
+      nfs:
+        path: ${CLUSTER_NFS_PATH}/harbor2/data
+        server: ${NFS_SERVER}
+    ---
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: pvc-harbor
+      namespace: harbor
+    spec:
+      storageClassName: kthcloud-manual
+      accessModes:
+        - ReadWriteMany
+      resources:
+        requests:
+          storage: 100Gi
+    EOF
+    ```
+
+    Then create install Harbor using Helm
+    ```bash
+    helm upgrade --install harbor harbor \
+      --repo https://helm.goharbor.io \
+      --namespace harbor \
+      --create-namespace \
+      --values - <<EOF
+    expose:
+      type: ingress
+      tls:
+        enabled: false
+      ingress:
+        hosts:
+          core: registry-beta.${DOMAIN}
+        controller: default
+        className: nginx
+    externalURL: https://registry-beta.${DOMAIN}
+    persistence:
+      enabled: true
+      resourcePolicy: keep
+      persistentVolumeClaim:
+        registry:
+          existingClaim: pvc-harbor
+          subPath: registry
+          storageClass: "kthcloud-manual"
+          accessMode: ReadWriteMany
+        jobservice:
+          jobLog:
+            existingClaim: pvc-harbor
+            subPath: job_logs
+            storageClass: "kthcloud-manual"
+            accessMode: ReadWriteMany
+        database:
+          existingClaim: pvc-harbor
+          subPath: database
+          storageClass: "kthcloud-manual"
+          accessMode: ReadWriteMany
+        redis:
+          existingClaim: pvc-harbor
+          subPath: redis
+          storageClass: "kthcloud-manual"
+          accessMode: ReadWriteMany
+        trivy:
+          existingClaim: pvc-harbor
+          subPath: trivy
+          storageClass: "kthcloud-manual"
+          accessMode: ReadWriteMany
+      imageChartStorage:
+        type: filesystem
+    database:
+      internal:
+        password: harbor
+    metrics:
+      enabled: true
+      core:
+        path: /metrics
+        port: 8001
+      registry:
+        path: /metrics
+        port: 8001
+      jobservice:
+        path: /metrics
+        port: 8001
+      exporter:
+        path: /metrics
+        port: 8001
+    EOF
+    ```
+
 ### 2. Update required DNS records
 Since the sys-cluster is used to manage other clusters, it is important that the DNS records are set up correctly. 
 
@@ -282,8 +484,10 @@ Make sure that the cluster you are deploying have atleast one node for each role
     export IP_POOL=
     # NFS server for the storage classes, for example nfs.cloud.cbh.kth.se
     export NFS_SERVER=
-    # Base path for the different kind of storages that are used: disks, scratch and user storage
-    export NFS_BASE_PATH=
+    # Path to the deploy service, for example /mnt/cloud/apps/sys/deploy
+    export DEPLOY_NFS_PATH=
+    # Path to the cluster storage, for example /mnt/cloud/apps/se-flem-2-deploy
+    export CLUSTER_NFS_PATH=
     ```
 
 2. Install `Ingress-NGINX`
@@ -518,7 +722,18 @@ Make sure that the cluster you are deploying have atleast one node for each role
     kubectl create -f https://github.com/kubevirt/containerized-data-importer/releases/download/$VERSION/cdi-cr.yaml
     ```
 
-10. Install required storage classes
+10. Install NFS CSI provisioner
+
+    The NFS provisioner allows automatic creation of PVs and PVCs for NFS storage. This is used for the VM disks and scratch space.
+
+    ```bash
+    helm install csi-driver-nfs csi-driver-nfs \
+      --repo https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/charts \
+      --namespace kube-system \
+      --version v4.7.0
+    ```
+
+11. Install required storage classes
 
     This step is only necessary if you installed KubeVirt in the previous step. The storage classes are used to define the storage that the VMs will use, and uses 2 storage classes for different purposes. User storage does not use a storage class and instead manually creates PV and PVCs (so it needs to be configured in the configuration later on).
 
@@ -530,7 +745,7 @@ Make sure that the cluster you are deploying have atleast one node for each role
       name: deploy-vm-disks
     parameters:
       server: ${NFS_SERVER}
-      share: /mnt/cloud/apps/sys/deploy/vms/disks
+      share: ${DEPLOY_NFS_PATH}/vms/disks
     provisioner: nfs.csi.k8s.io
     reclaimPolicy: Delete
     volumeBindingMode: Immediate
@@ -545,14 +760,39 @@ Make sure that the cluster you are deploying have atleast one node for each role
       name: deploy-vm-scratch
     parameters:
       server: ${NFS_SERVER}
-      share: /mnt/cloud/apps/sys/deploy/vms/scratch
+      share: ${DEPLOY_NFS_PATH}/vms/scratch
     provisioner: nfs.csi.k8s.io
     reclaimPolicy: Delete
     volumeBindingMode: Immediate
     EOF
     ```
 
-11. Edit the `CDI` installation to use the scratch space storage classes
+12. Install miscellaneous storage class
+
+    It's convienient to have a storage class for general use. Since storage is implemented on a per-cluster basis. You need to edit the following manifest so it fits your environment. The manifest below is configured for the `se-flem-2-deploy` cluster in the zone `se-flem`.
+
+    ```bash
+    kubectl apply -f - <<EOF
+    apiVersion: storage.k8s.io/v1
+    kind: StorageClass
+    metadata:
+      name: kthcloud-misc
+    parameters:
+      server: ${NFS_SERVER}
+      share: ${CLUSTER_NFS_PATH}/misc
+    provisioner: nfs.csi.k8s.io
+    reclaimPolicy: Delete
+    volumeBindingMode: Immediate
+    EOF
+    ```
+
+13. Setup monitoring
+
+    Rancher has built-in monitoring using Prometheus and Grafana. To enable monitoring, you need to install the monitoring stack. Go to the cluster in Rancher then `Apps > Charts` and install `Monitoring`.
+
+    Bonus points if you use the misc storage class you created in the previous step!
+
+14. Edit the `CDI` installation to use the scratch space storage classes
 
     This step is only necessary if you installed KubeVirt in the previous step. The CDI operator uses the scratch space storage class to store temporary data when importing VMs.
 
@@ -568,7 +808,7 @@ Make sure that the cluster you are deploying have atleast one node for each role
         scratchSpaceStorageClass: deploy-vm-scratch
     ```
 
-12. Install `Velero`
+15. Install `Velero`
 
     **This step is currently WIP. You can skip this step for now.**
 
