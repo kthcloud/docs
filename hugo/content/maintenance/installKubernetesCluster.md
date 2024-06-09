@@ -678,27 +678,7 @@ Make sure that the cluster you are deploying have atleast one node for each role
       --create-namespace    
     ```
 
-8. Install `hairpin-proxy`
-
-    Hairpin-proxy is a proxy that allows us to access services in the cluster from within the cluster. This is needed for the webhook to be able to access the cert-manager service when validating DNS challenges.
-
-    ```bash
-    kubectl apply -f https://raw.githubusercontent.com/JarvusInnovations/hairpin-proxy/v0.3.0/deploy.yml
-    ```
-
-    Edit the created `hairpin-proxy-controller` deployment in the `hairpin-proxy` namespace using Rancher or:
-    ```bash
-    kubectl edit deployment hairpin-proxy-controller -n hairpin-proxy
-    ````
-    Change the environment variables to be the following:
-    ```yaml
-    - name: COREDNS_CONFIGMAP_NAME
-      value: rke2-coredns-rke2-coredns
-    - name: COREDNS_IMPORT_CONFIG
-      value: 'false'
-    ```
-
-9. Install `KubeVirt`
+8. Install `KubeVirt`
 
     KubeVirt is what enables us to run VMs in the cluster. This is not mandatory, but it is required if the cluster is to be used for VMs.
 
@@ -722,7 +702,7 @@ Make sure that the cluster you are deploying have atleast one node for each role
     kubectl create -f https://github.com/kubevirt/containerized-data-importer/releases/download/$VERSION/cdi-cr.yaml
     ```
 
-10. Install NFS CSI provisioner
+9. Install NFS CSI provisioner
 
     The NFS provisioner allows automatic creation of PVs and PVCs for NFS storage. This is used for the VM disks and scratch space.
 
@@ -733,7 +713,7 @@ Make sure that the cluster you are deploying have atleast one node for each role
       --version v4.7.0
     ```
 
-11. Install required storage classes
+10. Install required storage classes
 
     This step is only necessary if you installed KubeVirt in the previous step. The storage classes are used to define the storage that the VMs will use, and uses 2 storage classes for different purposes. User storage does not use a storage class and instead manually creates PV and PVCs (so it needs to be configured in the configuration later on).
 
@@ -767,7 +747,7 @@ Make sure that the cluster you are deploying have atleast one node for each role
     EOF
     ```
 
-12. Install miscellaneous storage class
+11. Install miscellaneous storage class
 
     It's convienient to have a storage class for general use. Since storage is implemented on a per-cluster basis. You need to edit the following manifest so it fits your environment. The manifest below is configured for the `se-flem-2-deploy` cluster in the zone `se-flem`.
 
@@ -786,13 +766,13 @@ Make sure that the cluster you are deploying have atleast one node for each role
     EOF
     ```
 
-13. Setup monitoring
+12. Setup monitoring
 
     Rancher has built-in monitoring using Prometheus and Grafana. To enable monitoring, you need to install the monitoring stack. Go to the cluster in Rancher then `Apps > Charts` and install `Monitoring`.
 
     Bonus points if you use the misc storage class you created in the previous step!
 
-14. Edit the `CDI` installation to use the scratch space storage classes
+13. Edit the `CDI` installation to use the scratch space storage classes
 
     This step is only necessary if you installed KubeVirt in the previous step. The CDI operator uses the scratch space storage class to store temporary data when importing VMs.
 
@@ -808,7 +788,7 @@ Make sure that the cluster you are deploying have atleast one node for each role
         scratchSpaceStorageClass: deploy-vm-scratch
     ```
 
-15. Install `Velero`
+14. Install `Velero`
 
     **This step is currently WIP. You can skip this step for now.**
 
