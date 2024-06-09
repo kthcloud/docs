@@ -375,10 +375,10 @@ You should SSH into a master node of the sys-cluster to run the following comman
         enabled: false
       ingress:
         hosts:
-          core: registry-beta.${DOMAIN}
+          core: registry.${DOMAIN}
         controller: default
         className: nginx
-    externalURL: https://registry-beta.${DOMAIN}
+    externalURL: https://registry.${DOMAIN}
     persistence:
       enabled: true
       resourcePolicy: keep
