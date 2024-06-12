@@ -1,0 +1,16 @@
+env:
+  DEX_FRONTEND_ISSUER: DEX-KTH
+
+ingress:
+  enabled: true
+
+config:
+  storage:
+    type: kubernetes
+    config:
+      inCluster: true
+  oauth2:
+    responseTypes: [ "code", "token", "id_token" ]
+    skipApprovalScreen: true
+  staticClients:
+    - name: "Dex MAIA"
