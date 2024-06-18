@@ -1,3 +1,7 @@
+---
+title: Stop user registration
+---
+
 # Stop user registration 
 
 For some reason, you may want to temporarily disable new user registrations from kthcloud. This is how it was done last time it was needed.
