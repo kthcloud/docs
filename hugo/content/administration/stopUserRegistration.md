@@ -18,10 +18,11 @@ For some reason, you may want to temporarily disable new user registrations from
 
 <img src="../../images/idp-flow.png" height="400px">
 
+### Restore user registration functionality
+The default `first broker login` flow should be used when you want to allow new users to register again.
+
 ### Editing flows 
 The flows can be edited in keycloak admin panel's `Authentication` tab.
-
-The default `first broker login` flow should be used when you want to allow new users to register again.
 
 
 ## Announcing the registration pause
