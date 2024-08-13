@@ -16,4 +16,6 @@ To start up a MAIA cluster, follow the instructions in the [Start Single MAIA Cl
 
 After following and completing the instructions in the [Start Single MAIA Cluster](MAIA/start_maia_cluster.md) section, you will have a running MAIA cluster, and you can start configuring it ([Configure MAIA Cluster](MAIA/configure_maia_cluster.md)) to support different cluster features and applications.
 
+More information about User Registration in MAIA can be found in the [MAIA User Registration](MAIA/User_Registration.md) section.
+
 
