@@ -335,6 +335,15 @@ microk8s enable dashboard metrics-server cert-manager metallb nfs hostpath-stora
 microk8s enable istio observability # Optional, DO NOT enable istio if traefik is used as the Ingress controller
 ```
 
+## Krew Plugins
+Krew is a plugin manager for kubectl that allows users to discover and install kubectl plugins.
+To install Krew, follow the instructions in the [Krew](https://krew.sigs.k8s.io/docs/user-guide/setup/install/) documentation.
+The following Krew plugins are installed in the MAIA cluster:
+```shell
+kubectl krew install view-allocations 
+kubectl krew install oidc-login
+```
+
 ### Observability
 
 Observability is a set of tools that provide insights into the cluster and the applications running on it. The Observability tools enabled in the MAIA cluster are:
@@ -423,6 +432,15 @@ spec:
 EOF
 ```
 
+#### Loki
+To enable Loki monitoring in Grafana, verify that the Loki datasource is added to Grafana (http://loki.observability.svc.cluster.local:3100).
+
+
+#### NVIDIA DCGM Dashboard
+To enable the NVIDIA DCGM Dashboard in Grafana, create a new Dashboard and import the Dashboard with ID `12239` from the Grafana Dashboard Library.
+
+
+#### Calico Metrics 
 
 
 ## Kubernetes Dashboard
@@ -492,6 +510,38 @@ And then, create a new Policy for the MinIO tenant:
 ```shell
 microk8s kubectl-minio tenant policy create <TENANT_NAME> <MAIA_GROUP_NAME> --permission <PERMISSIONS>
 ```
+### MinIO Operator  [Recommended]
+The MinIO Operator is a Kubernetes Operator that manages MinIO Tenants on the cluster. The MinIO Operator is used to create, update, and delete MinIO Tenants on the cluster.
+To deploy the MinIO Operator on the MAIA cluster, run the following command:
+```shell
+helm repo add minio-operator https://operator.min.io
+
+helm install \
+  --namespace minio-operator \
+  --create-namespace \
+  operator minio-operator/operator
+```
+
+## Telepresence
+Telepresence is a tool that allows developers to run a local development environment that is connected to a remote Kubernetes cluster. Telepresence creates a two-way network proxy between the local machine and the remote cluster, allowing the local machine to access the cluster services as if they were running locally.
+
+To install Telepresence on the local machine, run the following command:
+```shell
+# 1. Download the latest binary (~95 MB):
+sudo curl -fL https://app.getambassador.io/download/tel2oss/releases/download/v2.17.0/telepresence-linux-amd64 -o /usr/local/bin/telepresence
+
+# 2. Make the binary executable:
+sudo chmod a+x /usr/local/bin/telepresence
+```
+To install Telepresence on the cluster, run the following command:
+```shell
+telepresence helm install
+```
+
+Finally to connect to the cluster, run the following command:
+```shell
+telepresence connect
+```
 
 ## Join Cluster
 
@@ -519,3 +569,75 @@ Next, label the worker node as a worker:
 ```shell
 microk8s kubectl label node <WORKER_NODE_NAME> node-role.kubernetes.io/worker=worker
 ```
+
+# Configure MAIA on Existing Rancher Cluster
+To configure an existing Rancher cluster, the following steps should be followed:
+- Create a dedicated Storage Class for the MAIA Deployments (e.g. Dedicated NFS Storage Class from NAS)
+```shell
+kubectl apply -f - <<EOF
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: <STORAGE_CLASS_NAME>
+provisioner: nfs.csi.k8s.io
+parameters:
+  server: <SERVER_ADDRESS>
+  share: <NFS_MOUNT_POINT>
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+ ```
+- Configure MetalLB for Load Balancing, reserving a range of IP addresses for the Load Balancer
+- Configure the Ingress Controller and the Certificates Manager Cluster Issuer
+- Deploy the NVIDIA GPU Operator and the NVIDIA GPU Operator Resources
+```shell
+helm upgrade gpu-operator -n gpu-operator --create-namespace \
+  nvidia/gpu-operator $HELM_OPTIONS \
+    --set toolkit.env[0].name=CONTAINERD_CONFIG \
+    --set toolkit.env[0].value=/var/lib/rancher/rke2/agent/etc/containerd/config.toml.tmpl \
+    --set toolkit.env[1].name=CONTAINERD_SOCKET \
+    --set toolkit.env[1].value=/run/k3s/containerd/containerd.sock \
+    --set toolkit.env[2].name=CONTAINERD_RUNTIME_CLASS \
+    --set toolkit.env[2].value=nvidia \
+    --set toolkit.env[3].name=CONTAINERD_SET_AS_DEFAULT \
+    --set-string toolkit.env[3].value=true \
+    --set driver.enabled=false #[Set to False if NVIDIA driver is already installed]
+```
+
+## SSH Port configuration
+To configure the cluster to allow SSH access to the MAIA Workspace environment, the firewall rules should be updated to allow incoming traffic and redirect it to the internal IP address of the cluster.
+For `LoadBalancer` services, add the following rule to the KTH-Cloud firewall under Firewall -> NAT:
+```
+Interface: WAN
+Protocol: TCP
+Destination: <EXTERNAL_IP>
+Destination Port Range: <START_PORT> - <END_PORT>
+Redirect Target IP: <INTERNAL_CLUSTER_IP>
+Redirect Target Port: <START_PORT>
+```
+
+For `NodePort` services, add the NodePort to the GlobalNetworkPolicy:
+```yaml
+apiVersion: crd.projectcalico.org/v1
+kind: GlobalNetworkPolicy
+metadata:
+  name: allow-nodeport-cluster-api
+spec:
+  applyOnForward: true
+  ingress:
+    - action: Allow
+      destination:
+        ports:
+          - 16443 # Cluster API
+          - <NodePort_1>
+          - <NodePort_2>
+          - <NodePort_3>
+        selector: has(exposed-to-public)
+      protocol: TCP
+  order: 10
+  preDNAT: true
+  selector: has(host-endpoint)
+```
+
+## Docker Registry [Coming Soon]
+## Vault [Coming Soon]
+## MAIA Dashboard [Coming Soon]
