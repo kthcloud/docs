@@ -8,11 +8,12 @@ title: kthcloud docs
 
 # Welcome to kthcloud\!
 
-We're thrilled that you're considering contributing to our project\!
 <b>kthcloud</b> is a student-run cloud provider that offers a free and
 open-source alternative to commercial cloud services. 
 
-Our project is proudly supported by a diverse group of partners, financial backing is provided by KTH CBH, the EU Erasmus+ program and the KTH Digitalisation Platform. We also receive invaluable computational support from KTH PDC via CoS
+Our project is proudly supported by a diverse group of partners, financial
+ backing is provided by KTH CBH, the EU Erasmus+ program and the KTH Digitalisation Platform. 
+ We also receive invaluable computational support from KTH PDC via CoS
 
 The project was kickstarted by the thesis "Designing and implementing a
 private cloud for student and faculty software projects" by Pierre Le
@@ -29,7 +30,26 @@ support, so please join our server to get started.
 
 You can also follow our [status bot
 account](https://mastodon.social/@kthcloud) on Mastodon to stay
-up-to-date with any maintenance or outage notifications.
+up-to-date with any maintenance or outage notifications. We're also on [Bluesky](https://bsky.app/profile/cloud.cbh.kth.se).
+
+## News
+You can find our news and blog posts in the sidebar, or menu on mobile. 
+
+Some posts you might be interested in:
+- [The State of Open-source API Clients](/News/2024-04-30/)
+- [Hej KubeVirt](/News/2024-04-29/)
+- [From CloudStack to KubeVirt: The Journey to a New Cloud](/News/2024-03-22/)
+- [Incident Report: Major March 2024 Outage](/News/2024-03-22)
+
+## Browse the Documentation
+Use the sidebar, or menu on mobile, to navigate through the documentation. 
+- **Usage**<br/>Using the kthcloud platform. - Most users will find what they need here.<br/><br/>
+- **Maintenance**<br/> Maintenance and setup information for maintainers.<br/><br/>
+- **Projects**<br/> Related projects and research.<br/><br/>
+- **Administrator's Handbook**<br/> Information for administrators, and overview of the platform.<br/><br/>
+- **Internal**<br/> Docs about internal services used by kthcloud.<br/><br/>
+- **Archive**<br/> Old or outdated documentation. <br/><br/>
+
 
 ## How to Contribute
 
@@ -59,7 +79,6 @@ to:
   - Sign off on your commits
 
 ## Thank You\!
-
-Thank you for considering contributing to <b>kthcloud</b>\! If you have
+Thank you for considering kthcloud! If you have
 any questions, feel free to reach out to us on our Discord server. We're
 always happy to help new contributors get up to speed.

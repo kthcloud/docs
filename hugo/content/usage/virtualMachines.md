@@ -61,19 +61,7 @@ If you have any questions, reach out on Discord :)
 ## Using the VM
 
 ### Attach a GPU
-
-A list of GPU may be available depending on your account's tier. Select
-**Lease GPU** and choose which card you want to attach. The card will be
-available to you for a finite timespan. When it expires, the card will
-remain attached to your VM, and usable, until someone else requests it.
-In this phase, you can renew the lease if you wish to keep it for
-another lease period.
-
-Ending the lease prematurely is always possible using the **End lease**
-button, and we hope you will return your GPU as soon as you are done
-with it, so others can use it.
-
-<img src="../../images/vm_gpu.png" width="100%">
+Visit [this guide](/usage/gpu) for more information.
 
 #### Installing drivers
 
@@ -85,7 +73,7 @@ apt update && apt upgrade -y && apt autoremove -y
 # You may need to reboot the vm at this point
 
 # Install the drivers
-apt install nvidia-driver-XXX-server nvidia-utils-XXX-server -y` 
+apt install nvidia-driver-XXX-server nvidia-utils-XXX-server -y 
 # where XXX is the desired driver version, for example 535.
 ```
 
@@ -109,15 +97,6 @@ Thu Jan 11 14:25:22 2024
 |                                         |                      |                  N/A |
 +-----------------------------------------+----------------------+----------------------+
 ```
-
-
-
-#### Snapshots
-
-Snapshots are a way to backup your VM before doing something risky. They
-create a checkpoint that you can revert to at any time. Snapshots will
-be created automatically sporadically, but we recommend creating them
-manually from time to time.
 
 #### Port forwarding
 

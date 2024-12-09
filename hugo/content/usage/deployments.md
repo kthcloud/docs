@@ -88,6 +88,11 @@ Your deployment's page allows you to change envs, create and delete
 persistent storage, view logs, get Docker push commands and GitHub
 Actions configuration. You can also use it to specify a custom domain.
 
+## Renaming a deployment
+It is possible to rename a deployment, this is easily done through the console, by clicking the pen icon next to the deployment's name.
+
+**NB!** The Docker registry tag will change, so you will have to update your build pipelines to use the new tag.
+
 ## FAQ
 
 ### I'm lost, are there any examples?
