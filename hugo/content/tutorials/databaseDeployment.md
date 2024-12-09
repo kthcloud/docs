@@ -24,7 +24,7 @@ In the storage manager, create a new directory called `postgres-example`, and in
 - **Data directory (`data`)**: This will store your database data and ensure that the data persists even if the container is restarted or moved between nodes.
 - **Init directory (`init`)**: This will hold SQL scripts used to initialize the database (e.g., creating tables, creating users or setting up schemas).
 
-<div width="75%">
+<div align="center" >
 
 <img src="../../images/tutorial_database_deployment_sm_create_directory.png" >
 
@@ -34,9 +34,9 @@ In the storage manager, create a new directory called `postgres-example`, and in
 
 It should look like this insied your main directory.
 
-<div width="75%">
+<div>
 
-<img src="../../images/tutorial_database_deployment_sm_data_and_init_created.png" width="75%">
+<img src="../../images/tutorial_database_deployment_sm_data_and_init_created.png">
 
 </div>
 
@@ -47,17 +47,17 @@ Make sure to note the paths for these directories, as you’ll need them later.
 Start by heading over to [create deployment](https://cloud.cbh.kth.se/create?type=deployment) on kthcloud.
 Select a name for your database deployment,
 
-<div width="75%">
+<div>
 
-<img src="../../images/tutorial_database_deployment_name.png" width="75%">
+<img src="../../images/tutorial_database_deployment_name.png">
 
 </div>
 
 Select the image of your desired database, eg [`postgres:15-alpine`](https://hub.docker.com/layers/library/postgres/15-alpine/images/sha256-0fb72c0bd71845e685f4c39afa3e1c56dfb5b22084df5652c69fb76de64c66c2?context=explore)
 
-<div width="75%">
+<div>
 
-<img src="../../images/tutorial_database_deployment_select_image.png" width="75%">
+<img src="../../images/tutorial_database_deployment_select_image.png">
 
 </div>
 
@@ -71,7 +71,7 @@ Set up the environment variables for your database. Most databases, including Po
 
 Example configuration:
 
-<img src="../../images/tutorial_database_deployment_environment_variables.png" width="75%">
+<img src="../../images/tutorial_database_deployment_environment_variables.png">
 
 #### Setting up persistent storage
 
@@ -86,7 +86,7 @@ For postgres it saves its data under `/var/lib/postgres/data` so that is what I 
 
 > TIP: If you have multiple scripts you can specify the order by naming them `1-<name>.sql`, `2-<name>.sql` and so on, to make sure they get executed in the correct order.
 
-<img src="../../images/tutorial_database_deployment_persistent_storage.png" width="75%">
+<img src="../../images/tutorial_database_deployment_persistent_storage.png">
 
 In the example above I have mounted the directories created at [Setting up storage](#setting-up-storage) to the container. The purpose of the data volume is to persist all the database data, and the purpose of the init volume is to be able to mount `sql` scripts to run when initializing the db.
 
@@ -96,13 +96,13 @@ Press Create.
 
 You should see logs like this after a while, if you have added scripts inside the `init` directory they will be run and you should see output logs from the db running them.
 
-<img src="../../images/tutorial_database_deployment_created_logs.png" width="75%">
+<img src="../../images/tutorial_database_deployment_created_logs.png">
 
 ### After creation
 
 Since the database doesnt expose any HTTP endpoint you can change the `Visibility` of the deployment to `Private`.
 
-<img src="../../images/tutorial_database_deployment_visibility.png" width="75%">
+<img src="../../images/tutorial_database_deployment_visibility.png">
 
 ### How do I access the database?
 
@@ -117,3 +117,27 @@ jdbc:postgres//postgres-example:5432/mydb?user=myuser&password=mypassword
 ### Done
 
 Congratulations you have set up a database deployment! 🎉
+
+
+### Troubleshooting
+
+If you have problems connecting to the database you can try the following troubleshooting steps
+
+#### Test database connection
+
+You can try to connect to your database deployment using an image that tries to connect and then logs the result. Such an image exists at `ghcr.io/phillezi/test-psql-conn:latest` and can be run with the following configuration, (for this tutorial im using the connection settings specified earlier).
+
+<img src="../../images/tutorial_database_deployment_troubleshoot_test_connection_configuration.png">
+
+The image serves an status page at `/` on the deployment, (you can check it out by clicking the visit button on the test connection deployment) which has information about if it is connected and all the tables and their row counts.
+The image only tries to connect once, so to retry connecting a reboot of the deployment is required.
+
+Here is an example on how it can look like, for this example I have used a sql script to create some tables and fill them.
+
+<div align="center" >
+
+<img src="../../images/tutorial_database_deployment_troubleshoot_testpsql_image.png">
+
+</div>
+
+If you dont get "Connection: Sucessful" there might be an issue with the credentials. Recheck the environment variables to make sure they match, empty the data directory on the `Storage Manager`, reboot the database and test connection image to try again.
