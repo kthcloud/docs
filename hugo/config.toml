@@ -43,7 +43,8 @@ enableGitInfo = true
 
 [module]
 [[module.imports]]
-  url = 'https://github.com/alex-shpak/hugo-book'
+  # url = 'https://github.com/alex-shpak/hugo-book'
+  path = 'github.com/alex-shpak/hugo-book'
 
 [params]
   # (Optional, default light) Sets color theme: light, dark or auto.
