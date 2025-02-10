@@ -6,7 +6,7 @@ title: Deploy a database
 
 Setting up a database deployment can be tricky, especially when dealing with persistent storage and configurations. This tutorial will guide you through the process of creating a database deployment on kthcloud.
 
-> ### NOTE: Accessing db deployments from outside the cloud is not possible
+> ### Accessing db deployments from outside the cloud is not possible
 > 
 > Directly accessing a database deployment from outside the cloud is not possible. Only HTTP traffic is routed to deployments via the Nginx proxy. If you need external access to your database, consider creating a Virtual Machine (VM) for that purpose.
 
@@ -32,7 +32,7 @@ In the storage manager, create a new directory called `postgres-example`, and in
 
 </div>
 
-It should look like this insied your main directory.
+It should look like this inside your main directory.
 
 <div>
 
@@ -80,7 +80,7 @@ Since your database will be running inside a Kubernetes cluster, it can be moved
 In the Persistent Storage section, you can mount the directories created earlier to the container.
 
 * Data Volume: Mount the data directory to a path inside the container where your database will store its data.
-For postgres it saves its data under `/var/lib/postgres/data` so that is what I will mount to my `postgres-example/data` directory I created earlier.
+For postgres it saves its data under `/var/lib/postgresql/data` so that is what I will mount to my `postgres-example/data` directory I created earlier.
 
 * Init Volume: Mount the init directory to a path inside the container to use SQL scripts (e.g., for creating schemas) during initialization. It is pretty common for containerized dbs to use `/docker-entrypoint-initdb.d` for this, which is the case with postgres, so I will mount it to my `postgres-example/init` directory.
 
@@ -130,7 +130,10 @@ You can try to connect to your database deployment using an image that tries to 
 <img src="../../images/tutorial_database_deployment_troubleshoot_test_connection_configuration.png">
 
 The image serves an status page at `/` on the deployment, (you can check it out by clicking the visit button on the test connection deployment) which has information about if it is connected and all the tables and their row counts.
-The image only tries to connect once, so to retry connecting a reboot of the deployment is required.
+
+> ### Restart the deployment to retry
+> 
+> The image only tries to connect once, so to retry connecting a restart of the deployment is required.
 
 Here is an example on how it can look like, for this example I have used a sql script to create some tables and fill them.
 
