@@ -7,7 +7,7 @@ title: Deploy a database
 Setting up a database deployment can be tricky, especially when dealing with persistent storage and configurations. This tutorial will guide you through the process of creating a database deployment on kthcloud.
 
 > ### Accessing db deployments from outside the cloud is not possible
-> 
+>
 > Directly accessing a database deployment from outside the cloud is not possible. Only HTTP traffic is routed to deployments via the Nginx proxy. If you need external access to your database, consider creating a Virtual Machine (VM) for that purpose.
 
 Most popular databases (e.g., PostgreSQL, MongoDB, MySQL) have container images available. In this tutorial, I will focus on PostgreSQL, but you can follow a similar approach for other databases.
@@ -16,7 +16,7 @@ Most popular databases (e.g., PostgreSQL, MongoDB, MySQL) have container images 
 
 ### Setting up storage
 
-1. Go to [`deploy`](https://cloud.cbh.kth.se/deploy) 
+1. Go to [`deploy`](https://cloud.cbh.kth.se/deploy)
 2. Click on the button labeled `Manage Storage` to open the storage manager.
 
 In the storage manager, create a new directory called `postgres-example`, and inside it, create two subdirectories: `init` and `data`. These will serve the following purposes:
@@ -66,7 +66,7 @@ Set up the environment variables for your database. Most databases, including Po
 | Key | Description |
 | --- | ----------- |
 | POSTGRES_USER | The user that should be created. |
-| POSTGRES_PASSWORD | The password for the created user.|
+| POSTGRES_PASSWORD | The password for the created user. |
 | POSTGRES_DB | The database that will be created. |
 
 Example configuration:
@@ -79,10 +79,10 @@ Since your database will be running inside a Kubernetes cluster, it can be moved
 
 In the Persistent Storage section, you can mount the directories created earlier to the container.
 
-* Data Volume: Mount the data directory to a path inside the container where your database will store its data.
+- Data Volume: Mount the data directory to a path inside the container where your database will store its data.
 For postgres it saves its data under `/var/lib/postgresql/data` so that is what I will mount to my `postgres-example/data` directory I created earlier.
 
-* Init Volume: Mount the init directory to a path inside the container to use SQL scripts (e.g., for creating schemas) during initialization. It is pretty common for containerized dbs to use `/docker-entrypoint-initdb.d` for this, which is the case with postgres, so I will mount it to my `postgres-example/init` directory.
+- Init Volume: Mount the init directory to a path inside the container to use SQL scripts (e.g., for creating schemas) during initialization. It is pretty common for containerized dbs to use `/docker-entrypoint-initdb.d` for this, which is the case with postgres, so I will mount it to my `postgres-example/init` directory.
 
 > TIP: If you have multiple scripts you can specify the order by naming them `1-<name>.sql`, `2-<name>.sql` and so on, to make sure they get executed in the correct order.
 
@@ -118,7 +118,6 @@ jdbc:postgres//postgres-example:5432/mydb?user=myuser&password=mypassword
 
 Congratulations you have set up a database deployment! 🎉
 
-
 ### Troubleshooting
 
 If you have problems connecting to the database you can try the following troubleshooting steps
@@ -132,7 +131,7 @@ You can try to connect to your database deployment using an image that tries to 
 The image serves an status page at `/` on the deployment, (you can check it out by clicking the visit button on the test connection deployment) which has information about if it is connected and all the tables and their row counts.
 
 > ### Restart the deployment to retry
-> 
+>
 > The image only tries to connect once, so to retry connecting a restart of the deployment is required.
 
 Here is an example on how it can look like, for this example I have used a sql script to create some tables and fill them.

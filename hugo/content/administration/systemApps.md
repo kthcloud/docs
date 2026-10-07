@@ -1,10 +1,11 @@
 # System Apps
 
-While most of the apps run on kthcloud should be hosted using deploy, there are a few exceptions, such as the dependecies of deploy itself.
+While most of the apps run on kthcloud should be hosted using deploy, there are a few exceptions, such as the dependencies of deploy itself.
 These apps are referred to as *System apps* and should be deployed manually in the sys-cluster.
 This guide describes the entire process to get an system app started, and is thus for system admins only.
 
 ## 1. (Optional) Persistent storage
+
 If your apps requires persistent storage, you need to first identify what paths you need to mount.
 Normally this is documented in the app's or image's documentation, such as `/etc/grafana` and `/var/lib/grafana` for grafana.
 
@@ -19,14 +20,15 @@ Once you have identified the paths, you need to create the storage pool in the N
 <img src="../../images/true_nas_add_nfs.png" width="80%">
 
 5. Go to [File Browser](https://drive.cloud.cbh.kth.se) and log in.
-6. Go to the folder you just created and create the subfolders you need. With the previous Grafana example it could be *config* to map to `/etc/grafana` and *db* or *data* to map to `/var/lib/grafana`. 
+6. Go to the folder you just created and create the subfolders you need. With the previous Grafana example it could be *config* to map to `/etc/grafana` and *db* or *data* to map to `/var/lib/grafana`.
 <img src="../../images/filebrowser_create_folders.png" width="80%">
 
 ## 2. Create the app
-To deploy the app in the sys-cluster you will need access to the [k8s GitHub repo](https://github.com/kthcloud/k8s).
-If you don't have access, ask a system admin to add you. 
 
-1. *(Preferrable)* Create a branch for your changes.
+To deploy the app in the sys-cluster you will need access to the [k8s GitHub repo](https://github.com/kthcloud/k8s).
+If you don't have access, ask a system admin to add you.
+
+1. *(Preferable)* Create a branch for your changes.
 2. Clone the repo and go to the `apps/sys` folder.
 3. Create a yaml file for your app, such as `grafana.yaml`.
 4. Add all the manifests required for your app. This includes the *namespace*, *service*, *deployment* and *ingress* (and *persistent volume claim* with *persistent volume* if you need persistent storage).
@@ -35,6 +37,7 @@ When creating the *persistent volume claim*, make sure to point the path to the 
 5. Commit and push your changes to the repo. It will automatically be deployed to the sys-cluster.
 
 ## Example: cicd-manager
+
 ```yaml
 ---
 kind: Namespace

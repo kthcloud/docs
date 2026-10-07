@@ -27,4 +27,5 @@ However, some system applications must remain **always active**, even if their o
     - Update replicas from `0` to whatever non zero value you require, at the time of writing this there is a bug [here](https://github.com/kthcloud/go-deploy/issues/683) that makes deployment not get re-enabled by just changing back replicas, so you will also need to update another spec, such as **cores** or **ram** for the replica change to take effect. You can change it back after it has started.
 
 ### What Happens Next?
+
 Once the "Always Active" option is enabled, the **stale resource cleaner worker** in [go-deploy](https://github.com/kthcloud/go-deploy/blob/e71a76f52dbc78fd2b84f78313dddb3a20041836/pkg/services/cleaner/stale_resource_cleaner.go#L25) will ignore this resource, preventing it from being disabled due to inactivity.
