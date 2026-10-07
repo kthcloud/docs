@@ -8,3 +8,5 @@ hugo/archetypes
 
 #VSCode
 *.code-workspace
+.vscode
+.idea

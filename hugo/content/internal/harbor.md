@@ -11,8 +11,6 @@ it too.
 
 The dashboard is available at <https://registry.cloud.cbh.kth.se>.
 
-The virtual machine is available over ssh using `ssh 172.31.1.10`
-
 ## Setup
 
 Harbor is hosted on a virtual machine in CloudStack.

@@ -33,8 +33,10 @@ set your DNS server to 130.237.83.246 temporarily.
 ## Tips and tricks
 
 ### DNS Lookup
+
 To check if your DNS is working you could [https://dns.google](https://dns.google) to request
 the different DNS records.
 
 #### See also
+
 -[PowerDNS](../maintenance/powerDNS "wikilink")
